@@ -37,11 +37,20 @@ int procesar_imagen(int argc, char *argv[])
     datos.con_verbose=false;
     *datos.imagen1= '\0';
     *datos.imagen2= '\0';
-    
+
     if(leer_arg(argc,argv,filtros,utilidades,&datos)==1)
     {
         return ERROR_ARGUMENTOS;
     }
+
+    for(int j=0;j<datos.cant_filtros;j++)
+    {
+        printf("\n%s", (datos.filtros_pedidos+j)->nombre);
+        printf("\n%d", (datos.filtros_pedidos+j)->parametro);
+    }
+
+    printf("\nIMAGENES: %d", datos.cant_imagenes);
+    printf("\nFILTROS: %d", datos.cant_filtros); // DEBUG
 
     return EXITO;
 }
@@ -54,6 +63,7 @@ int leer_arg(int argc, char* argv[], const char* filtros[], const char* utilidad
 
     for(i=1; i<argc;i++)
     {
+        parametro_extraido=0; //se reinicia la variable en cada vuelta para limpiar basura
         if( es_flag (*(argv+i)) ) //empieza por "--"?
         {
             if(funcion_valida(*(argv+i),filtros,&parametro_extraido) ) //es filtro
@@ -71,20 +81,20 @@ int leer_arg(int argc, char* argv[], const char* filtros[], const char* utilidad
                     strcpy( (datos->filtros_pedidos + datos->cant_filtros)->nombre, copia ); //guardo el nombre
                     (datos->filtros_pedidos + datos->cant_filtros)->parametro = parametro_extraido; //guardo el parametro
                     datos->cant_filtros++; //aumento el contador
-                    
+
                     printf("El argumento numero %d: %s es un filtro valido, guardado\n",i, *(argv+i));
 
                     if(necesita_dos_imagenes(copia)) //se fija si son necesarias dos imagenes
                     {
                         dos_imagenes=true;
                     }
-                    
+
                 }
                 else{
                     printf("El argumento numero %d: %s es un filtro duplicado, ignorado\n",i, *(argv+i));
                 }
-                
-                
+
+
             }
             else if(utilidad_valida(*(argv+i),utilidades)) //es utilidad
             {
@@ -141,7 +151,7 @@ int leer_arg(int argc, char* argv[], const char* filtros[], const char* utilidad
             return ERROR_ARGUMENTOS;
         }
     }
-        
+
 
     return EXITO;
 }
@@ -191,7 +201,7 @@ bool funcion_valida(const char* argumento, const char* filtros[], int* parametro
         }
     }
 
-    if(encontrado && i<= 3 && final_filtro!=NULL) //si es un filtro sin parametro pero tiene =
+    if(encontrado && i<= 3 && final_filtro!=NULL)
     {
         return false;
     }
@@ -234,7 +244,7 @@ bool filtro_ya_guardado(t_Datos* datos, const char* nombre) //si un filtro ya fu
 {
     for(int i=0; i<datos->cant_filtros; i++)
     {
-        if(strcmp( (datos->filtros_pedidos->nombre)+i, nombre) ==0 ) //Si ya esta registrado
+        if(strcmp( (datos->filtros_pedidos+i)->nombre, nombre) ==0 ) //Si ya esta registrado
         {
             return true;
         }

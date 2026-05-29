@@ -28,26 +28,70 @@ int procesar_imagen(int argc, char *argv[])
     const char* utilidades[] = {"--info", "--validar",
                        "--verbose","--help"};
 
-    leer_arg(argc,argv,filtros,utilidades);
+    t_Datos datos;
+    datos.cant_filtros=0;
+    datos.cant_imagenes=0;
+    datos.con_help=false;
+    datos.con_info=false;
+    datos.con_validar=false;
+    datos.con_verbose=false;
+    *datos.imagen1= '\0';
+    *datos.imagen2= '\0';
+    
+    if(leer_arg(argc,argv,filtros,utilidades,&datos)==1)
+    {
+        return ERROR_ARGUMENTOS;
+    }
 
     return EXITO;
 }
 
-int leer_arg(int argc, char* argv[], const char* filtros[], const char* utilidades[])
+int leer_arg(int argc, char* argv[], const char* filtros[], const char* utilidades[], t_Datos* datos)
 {
-    int i, cant_imagenes=0;
+    int i, parametro_extraido=0;
+    bool dos_imagenes=false;
+    char copia[40];
 
     for(i=1; i<argc;i++)
     {
         if( es_flag (*(argv+i)) ) //empieza por "--"?
         {
-            if(funcion_valida(*(argv+i),filtros) ) //es filtro
+            if(funcion_valida(*(argv+i),filtros,&parametro_extraido) ) //es filtro
             {
-                printf("El argumento numero %d: %s es un filtro valido\n",i, *(argv+i));
-                //guardar_funcion;
+                //sacamos el numero para guardarlo
+                strcpy(copia,*(argv+i));
+                char* pos_igual = strchr(copia,'=');
+                if(pos_igual!=NULL) //si hay algo despues del nombre del filtro(numero)
+                {
+                    *pos_igual='\0';
+                }
+                if(!filtro_ya_guardado(datos,copia)) //si el filtro no esta guardado
+                {
+                    //guardo en el vector de filtros respetando orden de aparicion
+                    strcpy( (datos->filtros_pedidos + datos->cant_filtros)->nombre, copia ); //guardo el nombre
+                    (datos->filtros_pedidos + datos->cant_filtros)->parametro = parametro_extraido; //guardo el parametro
+                    datos->cant_filtros++; //aumento el contador
+                    
+                    printf("El argumento numero %d: %s es un filtro valido, guardado\n",i, *(argv+i));
+
+                    if(necesita_dos_imagenes(copia)) //se fija si son necesarias dos imagenes
+                    {
+                        dos_imagenes=true;
+                    }
+                    
+                }
+                else{
+                    printf("El argumento numero %d: %s es un filtro duplicado, ignorado\n",i, *(argv+i));
+                }
+                
+                
             }
             else if(utilidad_valida(*(argv+i),utilidades)) //es utilidad
             {
+                if (strcmp(*(argv+i), "--verbose") == 0) datos->con_verbose = true;
+                if (strcmp(*(argv+i), "--help") == 0)    datos->con_help = true;
+                if (strcmp(*(argv+i), "--info") == 0)    datos->con_info = true;
+                if (strcmp(*(argv+i), "--validar") == 0) datos->con_validar = true;
                 printf("El argumento numero %d: %s es una utilidad valida\n",i, *(argv+i));
                 //usar_utilidad;
             }
@@ -61,38 +105,57 @@ int leer_arg(int argc, char* argv[], const char* filtros[], const char* utilidad
         {
             if(es_bmp(*(argv+i))) //termina en .bmp?
             {
-                if(cant_imagenes<2)
+                if(datos->cant_imagenes<2) //si todavia no hay dos imagenes
                 {
                     printf("El argumento numero %d: %s es una imagen\n",i,*(argv+i));
-                    cant_imagenes++;
+                    if(datos->cant_imagenes==0)
+                    {
+                        strcpy(datos->imagen1,*(argv+i));
+                    }
+                    if(datos->cant_imagenes==1)
+                    {
+                        strcpy(datos->imagen2,*(argv+i));
+                    }
+                    datos->cant_imagenes++;
                 }
                 else
                 {
                     printf("Cantidad maxima de imagenes excedida");
+                    return ERROR_ARGUMENTOS;
                 }
             }
             else
             {
                 printf("El argumento numero %d: %s es INVALIDO\n",i,*(argv+i));
+                //return ERROR_ARGUMENTOS;
             }
         }
 
     }
 
+    if(datos->cant_filtros>0)
+    {
+        if(dos_imagenes && datos->cant_imagenes!=2)
+        {
+            printf("Error de argumentos, se necesitan dos imagenes");
+            return ERROR_ARGUMENTOS;
+        }
+    }
+        
 
     return EXITO;
 }
 
-bool es_flag(const char* argumento)
+bool es_flag(const char* argumento) //revisa si empieza por "--"
 {
-    if(argumento==NULL || strlen(argumento)<3)
+    if(argumento==NULL || strlen(argumento)<2)
     {
         return false;
     }
     return( *(argumento) == '-' && *(argumento+1) == '-') ;
 }
 
-bool funcion_valida(const char* argumento, const char* filtros[]) //llega un argumento que ya cumple con la flag del "--"
+bool funcion_valida(const char* argumento, const char* filtros[], int* parametro) //llega un argumento que ya cumple con la flag del "--"
 {
 
     char copia_argumento[40];
@@ -111,6 +174,7 @@ bool funcion_valida(const char* argumento, const char* filtros[]) //llega un arg
         {
             return false;
         }
+        *parametro=num;
     }
 
     while(i<16 && !encontrado) //busco en el vector de filtros si es uno valido
@@ -125,6 +189,11 @@ bool funcion_valida(const char* argumento, const char* filtros[]) //llega un arg
         {
             i++;
         }
+    }
+
+    if(encontrado && i<= 3 && final_filtro!=NULL) //si es un filtro sin parametro pero tiene =
+    {
+        return false;
     }
 
     return encontrado;
@@ -159,4 +228,22 @@ int es_bmp (const char* argumento)
         return true;
     }
     return false;
+}
+
+bool filtro_ya_guardado(t_Datos* datos, const char* nombre) //si un filtro ya fue guardado ret true, sino false
+{
+    for(int i=0; i<datos->cant_filtros; i++)
+    {
+        if(strcmp( (datos->filtros_pedidos->nombre)+i, nombre) ==0 ) //Si ya esta registrado
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool necesita_dos_imagenes (const char* nombre) //Se fija si necesita dos imagenes
+{
+    return (strcmp(nombre, "--concatenar-horizontal") == 0 || strcmp(nombre, "--concatenar-vertical") == 0);
 }

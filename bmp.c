@@ -190,7 +190,11 @@ int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
 
         for (int j = 0; j < ancho; j++) {
             tPixelBMP *px = (tPixelBMP*) matriz_get(imagen->pixeles, filaMatriz, j);
-            fwrite(px, sizeof(tPixelBMP), 1, nueva_imagen);
+            // el profe dijo que si se creaba variable dentro del for, se creaba una vez y listo, entonces no se crea y destruye cada vez, 
+            //sino que se reutiliza la misma variable, entonces no hay problema en crearla dentro del for
+            fwrite(&px->azul,  sizeof(unsigned char), 1, nueva_imagen);
+            fwrite(&px->verde, sizeof(unsigned char), 1, nueva_imagen);
+            fwrite(&px->rojo,  sizeof(unsigned char), 1, nueva_imagen);
         }
 
         for (int p = 0; p < padding; p++)

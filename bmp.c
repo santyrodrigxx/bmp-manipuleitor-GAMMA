@@ -112,14 +112,17 @@ int bmp_validar_cabecera(const BMPCabecera *cabecera){
     int profundidad = cabecera->info.bitsPorPixel;
 
     if (dato[0] != 'B' || dato [1] != 'M'){
+        puts("Error: el archivo no es un BMP válido (firma incorrecta).");
         return BMP_INVALIDO;
     }
 
     if (comp != 0){
+        puts("Error: el archivo BMP no es válido (compresión no soportada).");
         return BMP_INVALIDO;
     }
 
     if (profundidad != 24){
+        puts("Error: el archivo BMP no es válido (profundidad de color no soportada).");
         return BMP_INVALIDO;
     }
 

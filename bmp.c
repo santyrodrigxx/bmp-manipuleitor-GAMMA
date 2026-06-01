@@ -81,7 +81,7 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen) //hasta el .b
             fread(&unidadPixel.verde, sizeof(unsigned char), 1, arc_imagen);
             fread(&unidadPixel.rojo, sizeof(unsigned char), 1, arc_imagen);
 
-            estadoError = matriz_set(imagen->pixeles,
+            estadoError = matriz_set(&imagen->pixeles,
                                      filaMatriz,
                                      j,
                                      &unidadPixel);
@@ -151,13 +151,12 @@ void bmp_imprimir_info(const tImagenBMP *imagen, const char *nombreArchivo)
 
 int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
 {
-    FILE *nueva_imagen = fopen(nombreArchivo, "wb");   
+    FILE *nueva_imagen = fopen(nombreArchivo, "wb");
     if(nueva_imagen == NULL){
         puts("Error al crear el archivo de imagen.");
-        return ERROR_ARC;
+        return ERROR_ARCHIVO;
     }
 
-  
     fseek(nueva_imagen, 0, SEEK_SET);
 
     //CABECERA ARCHIVO
@@ -166,7 +165,7 @@ int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
     fwrite(&imagen->cabecera.archivo.reservado1, sizeof(unsigned short), 1, nueva_imagen);
     fwrite(&imagen->cabecera.archivo.reservado2, sizeof(unsigned short), 1, nueva_imagen);
     fwrite(&imagen->cabecera.archivo.posPixeles, sizeof(unsigned int), 1, nueva_imagen);
-    
+
     //CABECERA INFO
     fwrite(&imagen->cabecera.info.tamCabecera, sizeof(unsigned int), 1, nueva_imagen);
     fwrite(&imagen->cabecera.info.anchoImagen, sizeof(int), 1, nueva_imagen);
@@ -184,14 +183,19 @@ int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
     int ancho = imagen->cabecera.info.anchoImagen;
     int padding = (4 - ((ancho * sizeof(tPixelBMP)) % 4)) % 4;
     unsigned char cero = 0;
+    tPixelBMP *px = (tPixelBMP *)malloc(sizeof(tPixelBMP));
 
     for (int i = 0; i < alto; i++) {
         int filaMatriz = alto - 1 - i;  // bottom-up, igual que en la lectura
 
         for (int j = 0; j < ancho; j++) {
-            tPixelBMP *px = (tPixelBMP*) matriz_get(imagen->pixeles, filaMatriz, j);
-            // el profe dijo que si se creaba variable dentro del for, se creaba una vez y listo, entonces no se crea y destruye cada vez, 
-            //sino que se reutiliza la misma variable, entonces no hay problema en crearla dentro del for
+
+            if(matriz_get(&imagen->pixeles, filaMatriz, j, px) != EXITO){
+                free(px);
+                fclose(nueva_imagen);
+                return ERROR_MEMORIA;
+            }
+            // el profe dijo que si se creaba variable dentro del for, se creaba una vez y listo, entonces no se crea y destruye cada vez, sino que se reutiliza la misma variable, entonces no hay problema en crearla dentro del for
             fwrite(&px->azul,  sizeof(unsigned char), 1, nueva_imagen);
             fwrite(&px->verde, sizeof(unsigned char), 1, nueva_imagen);
             fwrite(&px->rojo,  sizeof(unsigned char), 1, nueva_imagen);
@@ -201,6 +205,7 @@ int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
             fwrite(&cero, sizeof(unsigned char), 1, nueva_imagen);
     }
 
+    free(px);
     fclose(nueva_imagen);
 
     return EXITO;

@@ -52,6 +52,15 @@ int procesar_imagen(int argc, char *argv[])
     printf("\nIMAGENES: %d", datos.cant_imagenes);
     printf("\nFILTROS: %d", datos.cant_filtros); // DEBUG
 
+    tImagenBMP imagen1;
+    bmp_leer_imagen(datos.imagen1, &imagen1);
+
+    if(datos.cant_imagenes==2)
+    {
+        tImagenBMP imagen2;
+        bmp_leer_imagen(datos.imagen2, &imagen2);
+    }
+
     return EXITO;
 }
 
@@ -150,6 +159,12 @@ int leer_arg(int argc, char* argv[], const char* filtros[], const char* utilidad
             printf("Error de argumentos, se necesitan dos imagenes");
             return ERROR_ARGUMENTOS;
         }
+    }
+
+    if(datos->cant_imagenes==0)
+    {
+        printf("Error de argumentos, no se ingresaron imagenes");
+        return ERROR_ARGUMENTOS;
     }
 
 

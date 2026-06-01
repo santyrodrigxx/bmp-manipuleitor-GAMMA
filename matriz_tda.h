@@ -4,6 +4,8 @@
 // VARIAS FUNCIONES DEBERIAN OPERAR CON TDA MATRIZ
 // se va a encargar de manipular los pixeles en mem
 
+#include <stddef.h>
+
 typedef struct
 {
     void **datos;

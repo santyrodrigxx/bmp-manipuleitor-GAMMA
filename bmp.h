@@ -28,6 +28,7 @@
         Byte 50-53   coloresImportantes     4 bytes
 */
 
+//*******************************************************************************pragma pack
 #pragma pack(push, 1) //para que no haya padding entre los campos de las estructuras
 
 typedef struct
@@ -74,12 +75,13 @@ typedef struct
     tda_matriz pixeles;
 } tImagenBMP;
 
+#pragma pack(pop) //restauro el packing por defecto
+//*****************************************************************hasta aca el pragma pop
+
 typedef enum {
     CABECERA,
     PIXELES
 } modoBMP; //para que la funcion de escritura pueda escribir solo la cabecera o solo los pixeles, dependiendo del modo que se le pase como argumento
-
-#pragma pack(pop) //restauro el packing por defecto
 
 int bmp_leer_imagen(const char *, tImagenBMP *);
 //llama a matriz crear para reservar la memoria de la matriz de pixeles, y luego lee los pixeles del archivo y los almacena en la matriz

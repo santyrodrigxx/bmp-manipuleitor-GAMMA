@@ -9,14 +9,14 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen) //hasta el .b
 {
     if (imagen == NULL) {
         puts("Error: imagen nula.");
-        return ERROR_IMAGEN;
+        return ERROR_MEMORIA;
     }
-    
+
     FILE *arc_imagen = fopen(nombreArchivo, "rb");
 
     if (arc_imagen == NULL) { //aca no cargue la matriz, por lo tanto no hace falta destruir nada
         puts("Error al abrir archivo imagen.");
-        return ERROR_ARC;
+        return ERROR_ARCHIVO;
     }
 
     //LECTURA Y ALMACENAMIENTO DE INFO ARCHIVO BMP
@@ -41,7 +41,7 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen) //hasta el .b
 
     //con #pragma pack(push, 1) en el header, no hace falta validar el tamaño de la cabecera, porque se va a leer exactamente lo que ocupa la cabecera, sin bytes de relleno (padding
     //Capaz se puede simplificar la lectura de la cabecera leyendo todo el bloque de la cabecera de una sola vez, pero lo hice asi para entender mejor cada campo de la cabecera
-    
+
     //VALIDACION DE CONDICIONES (compresion, profundidad, tama�o y tipo de archivo)
     //No valido extension pq puede ser que la extension este mal y sin embargo el archivo sea BMP
     if(!bmp_validar_cabecera(&imagen->cabecera)){
@@ -62,7 +62,7 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen) //hasta el .b
     if(estadoError != EXITO){
         fclose(arc_imagen);
         //bmp_destruir_imagen(imagen); no se destruye porque no se creo la matriz, por lo tanto no se asigno memoria para la matriz, y el struct tImagenBMP se asigna en el main, por lo tanto tampoco se libera memoria del struct
-        return ERROR_MEM;
+        return ERROR_MEMORIA;
     }
 
     tPixelBMP unidadPixel;
@@ -90,9 +90,11 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen) //hasta el .b
             if(estadoError != EXITO){
                 bmp_destruir_imagen(imagen);
                 fclose(arc_imagen);
-                return ERROR_MEM;
+                return ERROR_MEMORIA;
+
             }//cierre if
         }//cierre for ancho
+
         fseek(arc_imagen, padding, SEEK_CUR); //salto el padding, que serian los pixeles de relleno (matriz borde multiplo de 4)
 
     }//cierre FOR filas
@@ -157,6 +159,7 @@ int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
         return ERROR_ARCHIVO;
     }
 
+
     fseek(nueva_imagen, 0, SEEK_SET);
 
     //CABECERA ARCHIVO
@@ -211,6 +214,6 @@ int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
     return EXITO;
 }
 
-void bmp_destruir_imagen(tImagenBMP *imagen){ // TENGO QUE VER COMO JOEL IMPLEMENTO LA FUNCION DE DESTRUIRMATRIZ, PARA PODER LIBERAR LA MEMORIA DEL STRUCT tImagenBMP
-    matriz_destruir(imagen->pixeles);
+void bmp_destruir_imagen(tImagenBMP *imagen){
+    matriz_destruir(&imagen->pixeles);
 }

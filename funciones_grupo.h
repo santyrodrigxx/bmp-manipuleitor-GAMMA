@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
-#include "bmp.h"
-#include "matriz_tda.h"
 #include <stddef.h>
+
+#include "matriz_tda.h"
+#include "bmp.h"
 
 #define EXITO 0
 #define ERROR_ARGUMENTOS 1

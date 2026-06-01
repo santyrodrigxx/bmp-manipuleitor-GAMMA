@@ -74,13 +74,15 @@ typedef struct
     tda_matriz pixeles;
 } tImagenBMP;
 
+typedef enum {
+    CABECERA,
+    PIXELES
+} modoBMP; //para que la funcion de escritura pueda escribir solo la cabecera o solo los pixeles, dependiendo del modo que se le pase como argumento
+
 #pragma pack(pop) //restauro el packing por defecto
 
 int bmp_leer_imagen(const char *, tImagenBMP *);
 //llama a matriz crear para reservar la memoria de la matriz de pixeles, y luego lee los pixeles del archivo y los almacena en la matriz
-
-/*int bmp_escribir_pixel(const char *nombreArchivo, const tImagenBMP *imagen, unsigned int fila, unsigned int columna);
-aca fume y de la buena, no den bola a esta */
 
 int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen);
 //llama a matriz obtener ptr para obtener la direccion de cada pixel en la matriz,
@@ -96,11 +98,9 @@ o validar que el alto de la imagen sea diferente de cero para admitir ambas tipo
 
 void bmp_destruir_imagen(tImagenBMP *imagen);
 //llama a matriz destruir para liberar la memoria de la matriz de pixeles, y luego libera la memoria del struct tImagenBMP
-//TENGO QUE VER COMO JOEL IMPLEMENTO LA FUNCION DE DESTRUIRMATRIZ, PARA PODER LIBERAR LA MEMORIA DEL STRUCT tImagenBMP
 
 void bmp_imprimir_info(const tImagenBMP *imagen, const char *nombreArchivo);
-//poder llamarla en cualquier momento del programa
+//podemos llamarla en cualquier momento del programa
 
 
 #endif // BMP_H_INCLUDED
-

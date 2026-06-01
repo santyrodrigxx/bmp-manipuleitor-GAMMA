@@ -44,7 +44,7 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen) //hasta el .b
 
     //VALIDACION DE CONDICIONES (compresion, profundidad, tama�o y tipo de archivo)
     //No valido extension pq puede ser que la extension este mal y sin embargo el archivo sea BMP
-    if(!bmp_validar_cabecera(&imagen->cabecera)){
+    if(bmp_validar_cabecera(&imagen->cabecera) != EXITO){
         fclose(arc_imagen);
         return BMP_INVALIDO;
     }

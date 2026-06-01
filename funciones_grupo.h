@@ -7,9 +7,6 @@
 #include <string.h>
 #include <stddef.h>
 
-#include "matriz_tda.h"
-#include "bmp.h"
-
 #define EXITO 0
 #define ERROR_ARGUMENTOS 1
 #define ERROR_ARCHIVO 2

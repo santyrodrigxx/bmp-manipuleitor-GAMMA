@@ -1,4 +1,6 @@
 #include "funciones_grupo.h"
+#include "filtros.h"
+#include "bmp.h"
 
 // Apellido: Avalos Irrazabal, Joel Antonio
 // DNI: 94275736
@@ -53,13 +55,31 @@ int procesar_imagen(int argc, char *argv[])
     printf("\nFILTROS: %d", datos.cant_filtros); // DEBUG
 
     tImagenBMP imagen1;
-    bmp_leer_imagen(datos.imagen1, &imagen1);
+    tImagenBMP imagen2;
+    int estado;
+
+    estado=bmp_leer_imagen(datos.imagen1, &imagen1);
+    if(estado!=EXITO)
+    {
+        printf("Error al cargar la primer imagen");
+        return estado;
+    }
 
     if(datos.cant_imagenes==2)
     {
-        tImagenBMP imagen2;
-        bmp_leer_imagen(datos.imagen2, &imagen2);
+        estado=bmp_leer_imagen(datos.imagen2, &imagen2);
+        if(estado!=EXITO)
+        {
+            printf("Error al cargar la segunda imagen");
+            bmp_destruir_imagen(&imagen1);
+            return estado;
+        }
     }
+
+    printf("\n\nAPLICADO DE FILTROS ----\n");
+
+    bucle_filtros(datos,&imagen1,&imagen2);
+
 
     return EXITO;
 }

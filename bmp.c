@@ -1,4 +1,5 @@
 #include "bmp.h"
+#include "funciones_grupo.h"
 #include "matriz_tda.h"
 
 //...las filas de p�xeles suelen estar guardadas de abajo hacia arriba,

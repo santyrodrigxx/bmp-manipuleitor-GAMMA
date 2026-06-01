@@ -1,7 +1,7 @@
 #ifndef BMP_H_INCLUDED
 #define BMP_H_INCLUDED
 
-#include "funciones_grupo.h"
+#include "matriz_tda.h"
 
 /*
     BMP FILE HEADER - 14 bytes

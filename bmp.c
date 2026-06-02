@@ -157,7 +157,7 @@ void bmp_imprimir_info(const tImagenBMP *imagen, const char *nombreArchivo)
 
 int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen, modoBMP escritura)
 {
-    FILE *nueva_imagen = fopen(nombreArchivo, "r+b");
+    FILE *nueva_imagen = fopen(nombreArchivo, "wb");
     if(nueva_imagen == NULL){
         puts("Error al crear el archivo de imagen.");
         return ERROR_ARCHIVO;

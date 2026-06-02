@@ -138,6 +138,64 @@ void aplicar_grises (tImagenBMP* imagen)
     }
 }
 
+void espejar_horizontal (tImagenBMP* imagen)
+{
+    int alto =imagen->cabecera.info.altoImagen;
+    int ancho =imagen->cabecera.info.anchoImagen;
+    int col_espejo;
+
+    tPixelBMP pixel, pixel_nuevo;
+    int i,j;
+
+    for(i=0;i<alto;i++) //i=filas
+    {
+        for(j=0;j<ancho/2;j++) //recorro las columnas hasta la mitad e intercambio
+        {
+            col_espejo=ancho-j-1; //por ej: si ancho=8, en el px0 espejo= 8-0-1 =7
+
+            matriz_get(&imagen->pixeles,i,j,&pixel);
+            matriz_get(&imagen->pixeles,i,col_espejo,&pixel_nuevo);
+
+            matriz_set(&imagen->pixeles,i,j,&pixel_nuevo);
+            matriz_set(&imagen->pixeles,i,col_espejo,&pixel);
+
+        }
+    }
+}
+
+void espejar_vertical (tImagenBMP* imagen)
+{
+    int alto =imagen->cabecera.info.altoImagen;
+    int ancho =imagen->cabecera.info.anchoImagen;
+    int fila_espejo,i,j;
+
+    tPixelBMP pixel, pixel_nuevo;
+
+    for(i=0;i<alto/2;i++) //recorro hasta la mitad de las filas
+    {
+        for(j=0;j<ancho;j++)
+        {
+            fila_espejo=alto-1-i;
+
+            matriz_get(&imagen->pixeles,i,j,&pixel);
+            matriz_get(&imagen->pixeles,fila_espejo,j,&pixel_nuevo);
+
+            matriz_set(&imagen->pixeles,i,j,&pixel_nuevo);
+            matriz_set(&imagen->pixeles,fila_espejo,j,&pixel);
+
+        }
+    }
+
+}
+
+void aumentar_contraste (tImagenBMP* imagen, const int parametro)
+{
+    //int alto =imagen->cabecera.info.altoImagen;
+    //int ancho =imagen->cabecera.info.anchoImagen;
+
+    //double aumento
+}
+
 /* "--negativo","--escala-de-grises",
     "--espejar-horizontal","--espejar-vertical",     SANTY
     "--aumentar-contraste"

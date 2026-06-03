@@ -78,8 +78,10 @@ int procesar_imagen(int argc, char *argv[])
 
     printf("\n\nAPLICADO DE FILTROS ----\n");
 
-    bucle_filtros(datos,&imagen1,&imagen2);
-
+    int codError = bucle_filtros(datos,&imagen1);
+    if(codError != EXITO){//por el momento lo pongo asi, dps me fijo bien
+        return codError;
+    }
 
     return EXITO;
 }

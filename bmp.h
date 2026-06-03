@@ -69,6 +69,7 @@ typedef struct
     unsigned char rojo;
 } tPixelBMP;
 
+
 typedef struct
 {
     BMPCabecera cabecera;
@@ -78,15 +79,15 @@ typedef struct
 #pragma pack(pop) //restauro el packing por defecto
 //*****************************************************************hasta aca el pragma pop
 
-typedef enum {
+/*typedef enum {
     CABECERA,
     PIXELES
-} modoBMP; //para que la funcion de escritura pueda escribir solo la cabecera o solo los pixeles, dependiendo del modo que se le pase como argumento
+} modoBMP;*/ //para que la funcion de escritura pueda escribir solo la cabecera o solo los pixeles, dependiendo del modo que se le pase como argumento
 
 int bmp_leer_imagen(const char *, tImagenBMP *);
 //llama a matriz crear para reservar la memoria de la matriz de pixeles, y luego lee los pixeles del archivo y los almacena en la matriz
 
-int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen, modoBMP escritura);
+int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen);
 //llama a matriz obtener ptr para obtener la direccion de cada pixel en la matriz,
 //y luego escribe los pixeles en el archivo, respetando el formato BMP (bottom-up, padding, etc)
 

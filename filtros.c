@@ -6,7 +6,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1)
     int i;
     int codError = EXITO;
 
-    char nombreFinal[256] = "GAMMA.bmp";
+    char nombreFinal[256] = "GAMMA.bmp"; 
 
     for(i=0;i<datos.cant_filtros;i++)
     {
@@ -16,8 +16,8 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1)
         }
 
         //FILTRO: NEGATIVO----------------------------------------------------------------------
-        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--negativo")==0)
-        {   puts("AAA");
+        if(strcmp((datos.filtros_pedidos+i)->nombre,"--negativo")==0)
+        {   
             codError = aplicar_negativo(imagen1);
             if(codError != EXITO){
                 bmp_destruir_imagen(imagen1);
@@ -33,7 +33,6 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1)
         //FILTRO: ESCALA DE GRISES ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--escala-de-grises")==0)
         {
-            puts("AAA");
             codError = aplicar_grises(imagen1);
             if(codError != EXITO){
                 bmp_destruir_imagen(imagen1);
@@ -45,30 +44,49 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1)
                              (datos.filtros_pedidos+i)->parametro);
         }
         //FILTRO: ESPEJAR HORIZONALMENTE ----------------------------------------------------------
-        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--espejar-horizontal")==0)//revisar funcion
+        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--espejar-horizontal")==0)
         {
-            puts("AAA");
-            //codError =
-            espejar_horizontal(imagen1); //DEBERIA DEVOLVER UN ERROR
-            /*if(codError != EXITO){
+            codError= espejar_horizontal(imagen1); 
+            if(codError != EXITO){
                 bmp_destruir_imagen(imagen1);
                 return codError;
-            }*/
+            }
             adicionar_filtro(nombreFinal,
                             (datos.filtros_pedidos+i)->nombre,
                             (datos.filtros_pedidos+i)->parametro);
         }
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--espejar-vertical")==0)
         {
-            //aplicar_filtro4(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            codError= espejar_vertical(imagen1); 
+            if(codError != EXITO){
+                bmp_destruir_imagen(imagen1);
+                return codError;
+            }
+            adicionar_filtro(nombreFinal,
+                            (datos.filtros_pedidos+i)->nombre,
+                            (datos.filtros_pedidos+i)->parametro);
         }
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--aumentar-contraste")==0)
         {
-            //aplicar_filtro5(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            codError= aumentar_contraste(imagen1,(datos.filtros_pedidos+i)->parametro);
+            if(codError != EXITO){
+                bmp_destruir_imagen(imagen1);
+                return codError;
+            }
+            adicionar_filtro(nombreFinal,
+                            (datos.filtros_pedidos+i)->nombre,
+                            (datos.filtros_pedidos+i)->parametro);
         }
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--reducir-contraste")==0)
         {
-            //aplicar_filtro6(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            codError= reducir_contraste(imagen1,(datos.filtros_pedidos+i)->parametro);
+            if(codError != EXITO){
+                bmp_destruir_imagen(imagen1);
+                return codError;
+            }
+            adicionar_filtro(nombreFinal,
+                            (datos.filtros_pedidos+i)->nombre,
+                            (datos.filtros_pedidos+i)->parametro);
         }
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--tonalidad-azul")==0)
         {
@@ -143,6 +161,8 @@ void adicionar_filtro(char *nombreArchivo, const char *nombreFiltro, int paramet
     strcat(nombreArchivo,"_imagen.bmp");
 }
 
+//FILTROS
+
 int aplicar_negativo (tImagenBMP* imagen)
 {
     int alto =imagen->cabecera.info.altoImagen;
@@ -214,11 +234,11 @@ int aplicar_grises (tImagenBMP* imagen)
     return EXITO;
 }
 
-void espejar_horizontal (tImagenBMP* imagen) //VER: NO SE ESPEJA, QUEDA IGUAL Y NO APLICA NOMBRE
+int espejar_horizontal (tImagenBMP* imagen) 
 {
     int alto =imagen->cabecera.info.altoImagen;
     int ancho =imagen->cabecera.info.anchoImagen;
-    int col_espejo;
+    int col_espejo, codigo= EXITO;
 
     tPixelBMP pixel, pixel_nuevo;
     int i,j;
@@ -229,21 +249,40 @@ void espejar_horizontal (tImagenBMP* imagen) //VER: NO SE ESPEJA, QUEDA IGUAL Y 
         {
             col_espejo=ancho-j-1; //por ej: si ancho=8, en el px0 espejo= 8-0-1 =7
 
-            matriz_get(&imagen->pixeles,i,j,&pixel);
-            matriz_get(&imagen->pixeles,i,col_espejo,&pixel_nuevo);
+            //Obtener pixeles a intercambiar
+            codigo= matriz_get(&imagen->pixeles,i,j,&pixel);
+            if(codigo != EXITO){
+                bmp_destruir_imagen(imagen);
+                return codigo;
+            }
+            codigo= matriz_get(&imagen->pixeles,i,col_espejo,&pixel_nuevo);
+            if(codigo != EXITO){
+                bmp_destruir_imagen(imagen);
+                return codigo;
+            }
 
-            matriz_set(&imagen->pixeles,i,j,&pixel_nuevo);
-            matriz_set(&imagen->pixeles,i,col_espejo,&pixel);
+            //Intercambiar pixeles
+            codigo= matriz_set(&imagen->pixeles,i,j,&pixel_nuevo);
+            if(codigo != EXITO){
+                bmp_destruir_imagen(imagen);
+                return codigo;
+            }
+            codigo= matriz_set(&imagen->pixeles,i,col_espejo,&pixel);
+            if(codigo != EXITO){
+                bmp_destruir_imagen(imagen);
+                return codigo;
+            }
 
         }
     }
+    return EXITO;
 }
 
-void espejar_vertical (tImagenBMP* imagen)
+int espejar_vertical (tImagenBMP* imagen)
 {
     int alto =imagen->cabecera.info.altoImagen;
     int ancho =imagen->cabecera.info.anchoImagen;
-    int fila_espejo,i,j;
+    int fila_espejo,i,j, codigo=EXITO;
 
     tPixelBMP pixel, pixel_nuevo;
 
@@ -253,23 +292,323 @@ void espejar_vertical (tImagenBMP* imagen)
         {
             fila_espejo=alto-1-i;
 
-            matriz_get(&imagen->pixeles,i,j,&pixel);
-            matriz_get(&imagen->pixeles,fila_espejo,j,&pixel_nuevo);
+            //Obtener pixeles a intercambiar
+            codigo= matriz_get(&imagen->pixeles,i,j,&pixel);
+            if(codigo != EXITO){
+                bmp_destruir_imagen(imagen);
+                return codigo;
+            }
+            codigo= matriz_get(&imagen->pixeles,fila_espejo,j,&pixel_nuevo);
+            if(codigo != EXITO){
+                bmp_destruir_imagen(imagen);
+                return codigo;
+            }
 
-            matriz_set(&imagen->pixeles,i,j,&pixel_nuevo);
-            matriz_set(&imagen->pixeles,fila_espejo,j,&pixel);
+            //Intercambiar pixeles
+            codigo= matriz_set(&imagen->pixeles,i,j,&pixel_nuevo);
+            if(codigo != EXITO){
+                bmp_destruir_imagen(imagen);
+                return codigo;
+            }
+            codigo= matriz_set(&imagen->pixeles,fila_espejo,j,&pixel);
+            if(codigo != EXITO){
+                bmp_destruir_imagen(imagen);
+                return codigo;
+            }
 
         }
     }
+    return EXITO;
 
 }
 
-void aumentar_contraste (tImagenBMP* imagen, const int parametro)
+void acomodar(double* color)
 {
-    //int alto =imagen->cabecera.info.altoImagen;
-    //int ancho =imagen->cabecera.info.anchoImagen;
+    if( *(color)>255.0 )
+    {
+        *(color)=255.0;
+    }
+    else if( *(color)<0.0 )
+    {
+        *(color)=0.0;
+    }
+}
 
-    //double aumento
+int aumentar_contraste (tImagenBMP* imagen, const int parametro)
+{
+    int alto =imagen->cabecera.info.altoImagen;
+    int ancho =imagen->cabecera.info.anchoImagen;
+    double nuevo_rojo, nuevo_azul, nuevo_verde;
+
+    double factor = (259.0 * (parametro + 255.0)) / (255.0 * (259.0 - parametro));
+    tPixelBMP pixel;
+    int i,j, codigo=EXITO;
+
+    for(i=0;i<alto;i++)
+    {
+        for(j=0;j<ancho;j++)
+        {
+            codigo = matriz_get(&imagen->pixeles,i,j, &pixel);
+            if(codigo != EXITO){
+                bmp_destruir_imagen(imagen);
+                return codigo;
+            }
+
+            nuevo_rojo= factor* (pixel.rojo-128) + 128;
+            acomodar(&nuevo_rojo);
+
+            nuevo_azul= factor* (pixel.azul-128) + 128;
+            acomodar(&nuevo_azul);
+
+            nuevo_verde= factor* (pixel.verde-128) + 128;
+            acomodar(&nuevo_verde);
+
+            pixel.rojo= (unsigned char)(nuevo_rojo);
+            pixel.azul= (unsigned char)(nuevo_azul);
+            pixel.verde= (unsigned char)(nuevo_verde);
+
+            codigo = matriz_set(&imagen->pixeles,i,j,&pixel);
+            if(codigo != EXITO){
+                bmp_destruir_imagen(imagen);
+                return codigo;
+            }
+        }
+    }
+    return EXITO;
+}
+
+int reducir_contraste (tImagenBMP* imagen, const int parametro)
+{
+    int alto =imagen->cabecera.info.altoImagen;
+    int ancho =imagen->cabecera.info.anchoImagen;
+    double nuevo_rojo, nuevo_azul, nuevo_verde;
+
+    double factor = (259.0 * (255.0 - parametro)) / (255.0 * (259.0 + parametro));
+    tPixelBMP pixel;
+    int i,j, codigo=EXITO;
+
+    for(i=0;i<alto;i++)
+    {
+        for(j=0;j<ancho;j++)
+        {
+            codigo = matriz_get(&imagen->pixeles,i,j, &pixel);
+            if(codigo != EXITO){
+                bmp_destruir_imagen(imagen);
+                return codigo;
+            }
+
+            nuevo_rojo= factor* (pixel.rojo-128) + 128;
+            acomodar(&nuevo_rojo);
+
+            nuevo_azul= factor* (pixel.azul-128) + 128;
+            acomodar(&nuevo_azul);
+
+            nuevo_verde= factor* (pixel.verde-128) + 128;
+            acomodar(&nuevo_verde);
+
+            pixel.rojo= (unsigned char)(nuevo_rojo);
+            pixel.azul= (unsigned char)(nuevo_azul);
+            pixel.verde= (unsigned char)(nuevo_verde);
+
+            codigo = matriz_set(&imagen->pixeles,i,j,&pixel);
+            if(codigo != EXITO){
+                bmp_destruir_imagen(imagen);
+                return codigo;
+            }
+        }
+    }
+    return EXITO;
+}
+
+void aplicar_tonalidad_azul(tImagenBMP* imagen, int porcentaje)
+{
+    int alto = imagen->cabecera.info.altoImagen;
+    int ancho = imagen->cabecera.info.anchoImagen;
+    tPixelBMP pixel;
+    int i, j, nuevo_valor;
+
+    for(i = 0; i < alto; i++) // i=filas
+    {
+        for(j = 0; j < ancho; j++) // j=columnas
+        {
+            matriz_get(&imagen->pixeles, i, j, &pixel);
+
+            nuevo_valor = pixel.azul + (pixel.azul * porcentaje / 100);
+            if(nuevo_valor > 255)
+            {
+                nuevo_valor = 255;
+            }
+            pixel.azul = (unsigned char)nuevo_valor;
+
+            matriz_set(&imagen->pixeles, i, j, &pixel);
+        }
+    }
+}
+
+void aplicar_tonalidad_verde(tImagenBMP* imagen, int porcentaje)
+{
+    int alto = imagen->cabecera.info.altoImagen;
+    int ancho = imagen->cabecera.info.anchoImagen;
+    tPixelBMP pixel;
+    int i, j, nuevo_valor;
+
+    for(i = 0; i < alto; i++)
+    {
+        for(j = 0; j < ancho; j++)
+        {
+            matriz_get(&imagen->pixeles, i, j, &pixel);
+
+            nuevo_valor = pixel.verde + (pixel.verde * porcentaje / 100);
+            if(nuevo_valor > 255)
+            {
+                nuevo_valor = 255;
+            }
+            pixel.verde = (unsigned char)nuevo_valor;
+
+            matriz_set(&imagen->pixeles, i, j, &pixel);
+        }
+    }
+}
+
+void aplicar_tonalidad_roja(tImagenBMP* imagen, int porcentaje)
+{
+    int alto = imagen->cabecera.info.altoImagen;
+    int ancho = imagen->cabecera.info.anchoImagen;
+    tPixelBMP pixel;
+    int i, j, nuevo_valor;
+
+    for(i = 0; i < alto; i++)
+    {
+        for(j = 0; j < ancho; j++)
+        {
+            matriz_get(&imagen->pixeles, i, j, &pixel);
+
+            nuevo_valor = pixel.rojo + (pixel.rojo * porcentaje / 100);
+            if(nuevo_valor > 255)
+            {
+                nuevo_valor = 255;
+            }
+            pixel.rojo = (unsigned char)nuevo_valor;
+
+            matriz_set(&imagen->pixeles, i, j, &pixel);
+        }
+    }
+}
+
+int aplicar_recortar(tImagenBMP* imagen, int porcentaje)
+{
+    int estado = EXITO;
+
+    if (porcentaje > 0 && porcentaje <= 100)
+    {
+        int alto = imagen->cabecera.info.altoImagen;
+        int ancho = imagen->cabecera.info.anchoImagen;
+
+        int nuevo_alto = (alto * porcentaje) / 100;
+        int nuevo_ancho = (ancho * porcentaje) / 100;
+
+        if (nuevo_alto > 0 && nuevo_ancho > 0)
+        {
+            tda_matriz nueva_matriz;
+            estado = matriz_crear(&nueva_matriz, nuevo_alto, nuevo_ancho, sizeof(tPixelBMP));
+
+            if (estado == EXITO)
+            {
+                tPixelBMP pixel;
+                int i, j, fila_orig;
+
+                for (i = 0; i < nuevo_alto; i++)
+                {
+                    fila_orig = i + (alto - nuevo_alto);
+                    for (j = 0; j < nuevo_ancho; j++)
+                    {
+                        matriz_get(&imagen->pixeles, fila_orig, j, &pixel);
+                        matriz_set(&nueva_matriz, i, j, &pixel);
+                    }
+                }
+
+                matriz_destruir(&imagen->pixeles);
+                imagen->pixeles = nueva_matriz;
+
+                // actualiza la cabecera con las nuevas dimensioness
+                imagen->cabecera.info.anchoImagen = nuevo_ancho;
+                imagen->cabecera.info.altoImagen = nuevo_alto;
+
+                int padding = (4 - ((nuevo_ancho * sizeof(tPixelBMP)) % 4)) % 4;
+                imagen->cabecera.info.tamImagen = (nuevo_ancho * sizeof(tPixelBMP) + padding) * nuevo_alto;
+                imagen->cabecera.archivo.tamArchivo = imagen->cabecera.archivo.posPixeles + imagen->cabecera.info.tamImagen;
+            }
+        }
+        else
+        {
+            estado = ERROR_ARGUMENTOS;
+        }
+    }
+    else
+    {
+        estado = ERROR_ARGUMENTOS;
+    }
+
+    return estado;
+}
+int aplicar_achicar(tImagenBMP* imagen, int porcentaje)
+{
+    int estado = EXITO;
+
+    if (porcentaje > 0 && porcentaje <= 100)
+    {
+        int alto = imagen->cabecera.info.altoImagen;
+        int ancho = imagen->cabecera.info.anchoImagen;
+
+        int nuevo_alto = (alto * porcentaje) / 100;
+        int nuevo_ancho = (ancho * porcentaje) / 100;
+
+        if (nuevo_alto > 0 && nuevo_ancho > 0)
+        {
+            tda_matriz nueva_matriz;
+            estado = matriz_crear(&nueva_matriz, nuevo_alto, nuevo_ancho, sizeof(tPixelBMP));
+
+            if (estado == EXITO)
+            {
+                tPixelBMP pixel;
+                int i, j, fila_orig, col_orig;
+
+                for (i = 0; i < nuevo_alto; i++)
+                {
+                    for (j = 0; j < nuevo_ancho; j++)
+                    {
+                        // proporcional a la matriz original
+                        fila_orig = (i * alto) / nuevo_alto;
+                        col_orig = (j * ancho) / nuevo_ancho;
+
+                        matriz_get(&imagen->pixeles, fila_orig, col_orig, &pixel);
+                        matriz_set(&nueva_matriz, i, j, &pixel);
+                    }
+                }
+
+                matriz_destruir(&imagen->pixeles);
+                imagen->pixeles = nueva_matriz;
+
+                // actualizaci�n de los datos del archivo
+                imagen->cabecera.info.anchoImagen = nuevo_ancho;
+                imagen->cabecera.info.altoImagen = nuevo_alto;
+
+                int padding = (4 - ((nuevo_ancho * sizeof(tPixelBMP)) % 4)) % 4;
+                imagen->cabecera.info.tamImagen = (nuevo_ancho * sizeof(tPixelBMP) + padding) * nuevo_alto;
+                imagen->cabecera.archivo.tamArchivo = imagen->cabecera.archivo.posPixeles + imagen->cabecera.info.tamImagen;
+            }
+        }
+        else
+        {
+            estado = ERROR_ARGUMENTOS;
+        }
+    }
+    else
+    {
+        estado = ERROR_ARGUMENTOS;
+    }
+
+    return estado;
 }
 
 /* "--negativo","--escala-de-grises",

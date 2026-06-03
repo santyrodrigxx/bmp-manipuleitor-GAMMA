@@ -58,13 +58,20 @@ int procesar_imagen(int argc, char *argv[])
     tImagenBMP imagen2;
     int estado;
 
+    //CARGA DE LA PRIMER IMAGEN:-----------------------------------------
+    
     estado=bmp_leer_imagen(datos.imagen1, &imagen1);
     if(estado!=EXITO)
     {
         printf("Error al cargar la primer imagen");
+        bmp_destruir_imagen(&imagen1);
+        bmp_destruir_imagen(&imagen2);
         return estado;
     }
 
+    //CARGA DE LA SEGUNDA IMAGEN:------------------------------------------
+    //Si no se cargan dos imagenes, se carga la misma imagen en ambos punteros para que los filtros que necesitan dos imagenes puedan funcionar sin problemas
+   
     if(datos.cant_imagenes==2)
     {
         estado=bmp_leer_imagen(datos.imagen2, &imagen2);
@@ -72,24 +79,34 @@ int procesar_imagen(int argc, char *argv[])
         {
             printf("Error al cargar la segunda imagen");
             bmp_destruir_imagen(&imagen1);
+            bmp_destruir_imagen(&imagen2);//tenemos que destruir la imagen aunque no se haya cargado bien para evitar errores de memoria
+            return estado;
+        }
+    }
+    else{
+        estado = bmp_leer_imagen(datos.imagen1, &imagen2);
+        if(estado!=EXITO)
+        {
+            bmp_destruir_imagen(&imagen1);
+            bmp_destruir_imagen(&imagen2);
+            puts("Error al cargar la primer imagen");
             return estado;
         }
     }
 
     printf("\n\nAPLICADO DE FILTROS ----\n");
 
-    int codError = bucle_filtros(datos, &imagen1);
-    
-    // Al terminar (haya error o éxito), liberamos los recursos de las imágenes en memoria
-    bmp_destruir_imagen(&imagen1);
-    if(datos.cant_imagenes == 2)
-    {
+    estado = bucle_filtros(datos,&imagen1,&imagen2);
+    if(estado != EXITO){
+        bmp_destruir_imagen(&imagen1);
         bmp_destruir_imagen(&imagen2);
+        return estado;
     }
+    
+    // Al terminar (haya error o éxito), liberamos los recursos de las imágenes en memoria----------
 
-    if(codError != EXITO){
-        return codError;
-    }
+    bmp_destruir_imagen(&imagen2); //destruyo la segunda imagen porque ya no se va a usar
+    bmp_destruir_imagen(&imagen1); //destruyo la primera imagen porque ya se guardo el resultado en un nuevo archivo, por lo que ya no se necesita
 
     return EXITO;
 }

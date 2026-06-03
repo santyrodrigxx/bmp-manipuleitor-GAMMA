@@ -63,7 +63,7 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen) //hasta el .b
     if(estadoError != EXITO){
         fclose(arc_imagen);
         //bmp_destruir_imagen(imagen); no se destruye porque no se creo la matriz, por lo tanto no se asigno memoria para la matriz, y el struct tImagenBMP se asigna en el main, por lo tanto tampoco se libera memoria del struct
-        return ERROR_MEMORIA;
+        return estadoError;
     }
 
     tPixelBMP unidadPixel;
@@ -91,7 +91,7 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen) //hasta el .b
             if(estadoError != EXITO){
                 bmp_destruir_imagen(imagen);
                 fclose(arc_imagen);
-                return ERROR_MEMORIA;
+                return estadoError;
 
             }//cierre if
         }//cierre for ancho
@@ -135,7 +135,7 @@ void bmp_imprimir_info(const tImagenBMP *imagen, const char *nombreArchivo)
 {
     int padding = (4 - ((imagen->cabecera.info.anchoImagen * sizeof(tPixelBMP)) % 4)) % 4;
 
-    printf("Informacion del archivo BMP:\n"
+    printf("\n\nInformacion del archivo BMP:\n"
            "  Nombre:               %s\n"
            "  Tamanio del archivo:  %u bytes\n"
            "  Dimensiones:          %dx%d pixeles\n"
@@ -155,7 +155,7 @@ void bmp_imprimir_info(const tImagenBMP *imagen, const char *nombreArchivo)
 }
 
 
-int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen, modoBMP escritura)
+int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
 {
     FILE *nueva_imagen = fopen(nombreArchivo, "wb");
     if(nueva_imagen == NULL){
@@ -163,75 +163,59 @@ int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen, mod
         return ERROR_ARCHIVO;
     }
 
-    switch (escritura)
-    {
-        case CABECERA:
-        {
-            //CABECERA ARCHIVO
-            fwrite(&imagen->cabecera.archivo.firma, sizeof(unsigned short), 1, nueva_imagen);
-            fwrite(&imagen->cabecera.archivo.tamArchivo, sizeof(unsigned int), 1, nueva_imagen);
-            fwrite(&imagen->cabecera.archivo.reservado1, sizeof(unsigned short), 1, nueva_imagen);
-            fwrite(&imagen->cabecera.archivo.reservado2, sizeof(unsigned short), 1, nueva_imagen);
-            fwrite(&imagen->cabecera.archivo.posPixeles, sizeof(unsigned int), 1, nueva_imagen);
+    //CABECERA ARCHIVO
+    fwrite(&imagen->cabecera.archivo.firma, sizeof(unsigned short), 1, nueva_imagen);
+    fwrite(&imagen->cabecera.archivo.tamArchivo, sizeof(unsigned int), 1, nueva_imagen);
+    fwrite(&imagen->cabecera.archivo.reservado1, sizeof(unsigned short), 1, nueva_imagen);
+    fwrite(&imagen->cabecera.archivo.reservado2, sizeof(unsigned short), 1, nueva_imagen);
+    fwrite(&imagen->cabecera.archivo.posPixeles, sizeof(unsigned int), 1, nueva_imagen);
 
-            //CABECERA INFO
-            fwrite(&imagen->cabecera.info.tamCabecera, sizeof(unsigned int), 1, nueva_imagen);
-            fwrite(&imagen->cabecera.info.anchoImagen, sizeof(int), 1, nueva_imagen);
-            fwrite(&imagen->cabecera.info.altoImagen, sizeof(int), 1, nueva_imagen);
-            fwrite(&imagen->cabecera.info.planos, sizeof(unsigned short), 1, nueva_imagen);
-            fwrite(&imagen->cabecera.info.bitsPorPixel, sizeof(unsigned short), 1,  nueva_imagen);
-            fwrite(&imagen->cabecera.info.compresion, sizeof(unsigned int), 1,  nueva_imagen);
-            fwrite(&imagen->cabecera.info.tamImagen, sizeof(unsigned int), 1,  nueva_imagen);
-            fwrite(&imagen->cabecera.info.resolucionHorizontal, sizeof(int), 1,  nueva_imagen);
-            fwrite(&imagen->cabecera.info.resolucionVertical, sizeof(int), 1,  nueva_imagen);
-            fwrite(&imagen->cabecera.info.coloresUsados, sizeof(unsigned int), 1,  nueva_imagen);
-            fwrite(&imagen->cabecera.info.coloresImportantes, sizeof(unsigned int), 1,  nueva_imagen);
+    //CABECERA INFO
+    fwrite(&imagen->cabecera.info.tamCabecera, sizeof(unsigned int), 1, nueva_imagen);
+    fwrite(&imagen->cabecera.info.anchoImagen, sizeof(int), 1, nueva_imagen);
+    fwrite(&imagen->cabecera.info.altoImagen, sizeof(int), 1, nueva_imagen);
+    fwrite(&imagen->cabecera.info.planos, sizeof(unsigned short), 1, nueva_imagen);
+    fwrite(&imagen->cabecera.info.bitsPorPixel, sizeof(unsigned short), 1,  nueva_imagen);
+    fwrite(&imagen->cabecera.info.compresion, sizeof(unsigned int), 1,  nueva_imagen);
+    fwrite(&imagen->cabecera.info.tamImagen, sizeof(unsigned int), 1,  nueva_imagen);
+    fwrite(&imagen->cabecera.info.resolucionHorizontal, sizeof(int), 1,  nueva_imagen);
+    fwrite(&imagen->cabecera.info.resolucionVertical, sizeof(int), 1,  nueva_imagen);
+    fwrite(&imagen->cabecera.info.coloresUsados, sizeof(unsigned int), 1,  nueva_imagen);
+    fwrite(&imagen->cabecera.info.coloresImportantes, sizeof(unsigned int), 1,  nueva_imagen);
 
-            fclose(nueva_imagen);
-            return EXITO;
-            break;
+    puts("Cabecera cargada...");
 
+    int alto  = imagen->cabecera.info.altoImagen;
+    int ancho = imagen->cabecera.info.anchoImagen;
+    int padding = (4 - ((ancho * sizeof(tPixelBMP)) % 4)) % 4;
+    unsigned char cero = 0;
+
+    tPixelBMP px;
+
+    fseek(nueva_imagen, imagen->cabecera.archivo.posPixeles, SEEK_SET);  // salteo la cabecera
+
+    for (int i = 0; i < alto; i++) {
+        int filaMatriz = alto - 1 - i;  // bottom-up, igual que en la lectura
+
+        for (int j = 0; j < ancho; j++) { //recorro cada pixel de la fila
+
+            if(matriz_get(&imagen->pixeles, filaMatriz, j, &px) != EXITO){
+                fclose(nueva_imagen);
+                return ERROR_MEMORIA;
+            }
+            fwrite(&px.azul,  sizeof(unsigned char), 1, nueva_imagen);
+            fwrite(&px.verde, sizeof(unsigned char), 1, nueva_imagen);
+            fwrite(&px.rojo,  sizeof(unsigned char), 1, nueva_imagen);
         }
-        case PIXELES:
-        {
-                    int alto  = imagen->cabecera.info.altoImagen;
-            int ancho = imagen->cabecera.info.anchoImagen;
-            int padding = (4 - ((ancho * sizeof(tPixelBMP)) % 4)) % 4;
-            unsigned char cero = 0;
 
-            tPixelBMP px;
+        for (int p = 0; p < padding; p++) //escribo el padding, que serian los pixeles de relleno (matriz borde multiplo de 4)
+            fwrite(&cero, sizeof(unsigned char), 1, nueva_imagen);
+    }//cierre FOR anidado
 
-            fseek(nueva_imagen, sizeof(BMPCabecera), SEEK_SET);  // salteo la cabecera
+    puts("Pixeles cargados con exito!");
 
-            for (int i = 0; i < alto; i++) {
-                int filaMatriz = alto - 1 - i;  // bottom-up, igual que en la lectura
-
-                for (int j = 0; j < ancho; j++) { //recorro cada pixel de la fila
-
-                    if(matriz_get(&imagen->pixeles, filaMatriz, j, &px) != EXITO){
-                        fclose(nueva_imagen);
-                        return ERROR_MEMORIA;
-                    }
-                    fwrite(&px.azul,  sizeof(unsigned char), 1, nueva_imagen);
-                    fwrite(&px.verde, sizeof(unsigned char), 1, nueva_imagen);
-                    fwrite(&px.rojo,  sizeof(unsigned char), 1, nueva_imagen);
-                }
-
-                for (int p = 0; p < padding; p++) //escribo el padding, que serian los pixeles de relleno (matriz borde multiplo de 4)
-                    fwrite(&cero, sizeof(unsigned char), 1, nueva_imagen);
-            }//cierre FOR anidado
-        
-            fclose(nueva_imagen);
-            return EXITO;
-            break;
-    
-        }//cierre case pixeles
-        default:
-            puts("Error. Modo de escritura no válido.");
-            fclose(nueva_imagen);
-            return ERROR_ARGUMENTOS;
-
-     }//cierre switch
+    fclose(nueva_imagen);
+    return EXITO;
 
 }
 

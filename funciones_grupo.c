@@ -78,8 +78,16 @@ int procesar_imagen(int argc, char *argv[])
 
     printf("\n\nAPLICADO DE FILTROS ----\n");
 
-    int codError = bucle_filtros(datos,&imagen1);
-    if(codError != EXITO){//por el momento lo pongo asi, dps me fijo bien
+    int codError = bucle_filtros(datos, &imagen1);
+    
+    // Al terminar (haya error o éxito), liberamos los recursos de las imágenes en memoria
+    bmp_destruir_imagen(&imagen1);
+    if(datos.cant_imagenes == 2)
+    {
+        bmp_destruir_imagen(&imagen2);
+    }
+
+    if(codError != EXITO){
         return codError;
     }
 
@@ -151,11 +159,13 @@ int leer_arg(int argc, char* argv[], const char* filtros[], const char* utilidad
                     printf("El argumento numero %d: %s es una imagen\n",i,*(argv+i));
                     if(datos->cant_imagenes==0)
                     {
-                        strcpy(datos->imagen1,*(argv+i));
+                        strncpy(datos->imagen1, *(argv+i), sizeof(datos->imagen1) - 1);
+                        datos->imagen1[sizeof(datos->imagen1) - 1] = '\0';
                     }
                     if(datos->cant_imagenes==1)
                     {
-                        strcpy(datos->imagen2,*(argv+i));
+                        strncpy(datos->imagen2, *(argv+i), sizeof(datos->imagen2) - 1);
+                        datos->imagen2[sizeof(datos->imagen2) - 1] = '\0';
                     }
                     datos->cant_imagenes++;
                 }
@@ -215,13 +225,6 @@ bool funcion_valida(const char* argumento, const char* filtros[], int* parametro
     if(final_filtro!=NULL) //si al final del filtro hay un igual
     {
         *final_filtro= '\0'; //pongo un \0 para dividir la palabra entre el filtro y la cantidad
-
-        num=atoi(final_filtro+1);
-        if( num<1 || num>100) //si el filtro tiene un numero, me fijo que sea valido
-        {
-            return false;
-        }
-        *parametro=num;
     }
 
     while(i<16 && !encontrado) //busco en el vector de filtros si es uno valido
@@ -238,10 +241,35 @@ bool funcion_valida(const char* argumento, const char* filtros[], int* parametro
         }
     }
 
-    if(encontrado && i<= 3 && final_filtro!=NULL)
+    if(encontrado && (i<= 3 || i>=11) && final_filtro!=NULL) //filtro sin parametro tiene =
     {
         return false;
     }
+
+    if(encontrado && (i>3 && i<11) && final_filtro==NULL) //filtro con parametro no tiene =
+    {
+        return false;
+    }
+
+    if(encontrado && final_filtro != NULL)
+    {
+        if(!IS_DIGIT( *(final_filtro+1) ) )
+        {
+            return false;
+        }
+        num=atoi(final_filtro+1);
+        if( num<0 || num>100) //si el filtro tiene un numero, me fijo que sea valido
+        {
+            return false;
+        }
+
+        if( (i==9 || i==10) && num==0 )
+        {
+            return false;
+        }
+        *parametro=num;
+    }
+
 
     return encontrado;
 }

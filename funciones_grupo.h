@@ -12,6 +12,7 @@
 #define ERROR_ARCHIVO 2
 #define ERROR_MEMORIA 3
 #define BMP_INVALIDO 4
+#define IS_DIGIT(c) ((c) >= '0' && (c) <= '9')
 
 typedef struct{
     char nombre[40];

@@ -102,6 +102,10 @@ int procesar_imagen(int argc, char *argv[])
     {
         printf("[INFO] Validando header BMP...\n");
         printf("[INFO] Archivo valido - Dimensiones: %d x %d, Tamanio: %d bytes\n",imagen1.cabecera.info.anchoImagen,imagen1.cabecera.info.altoImagen, imagen1.cabecera.info.tamImagen );
+        printf("[INFO] Reservando memoria para matriz %d x %d...\n", imagen1.cabecera.info.anchoImagen,imagen1.cabecera.info.altoImagen);
+        printf("[INFO] Memoria reservada exitosamente (%d pixeles)\n",imagen1.cabecera.info.anchoImagen*imagen1.cabecera.info.altoImagen);
+        printf("[INFO] Leyendo datos de imagen...\n");
+        printf("[INFO] Datos cargados correctamente\n");
     }
 
     //CARGA DE LA SEGUNDA IMAGEN:------------------------------------------
@@ -116,6 +120,15 @@ int procesar_imagen(int argc, char *argv[])
             bmp_destruir_imagen(&imagen1);
             bmp_destruir_imagen(&imagen2);//tenemos que destruir la imagen aunque no se haya cargado bien para evitar errores de memoria
             return estado;
+        }
+        if(estado==EXITO && datos.con_verbose)
+        {
+            printf("[INFO] Validando header BMP...\n");
+            printf("[INFO] Archivo valido - Dimensiones: %d x %d, Tamanio: %d bytes\n",imagen2.cabecera.info.anchoImagen,imagen2.cabecera.info.altoImagen, imagen2.cabecera.info.tamImagen );
+            printf("[INFO] Reservando memoria para matriz %d x %d...\n", imagen2.cabecera.info.anchoImagen,imagen2.cabecera.info.altoImagen);
+            printf("[INFO] Memoria reservada exitosamente (%d pixeles)\n",imagen2.cabecera.info.anchoImagen*imagen2.cabecera.info.altoImagen);
+            printf("[INFO] Leyendo datos de imagen...\n");
+            printf("[INFO] Datos cargados correctamente\n");
         }
     }
     else{
@@ -142,6 +155,12 @@ int procesar_imagen(int argc, char *argv[])
 
     bmp_destruir_imagen(&imagen2); //destruyo la segunda imagen porque ya no se va a usar
     bmp_destruir_imagen(&imagen1); //destruyo la primera imagen porque ya se guardo el resultado en un nuevo archivo, por lo que ya no se necesita
+
+    if(datos.con_verbose)
+    {
+        printf("\n[INFO] Liberando memoria...\n");
+        printf("[INFO] Proceso finalizado - %d archivos generados\n", datos.cant_filtros);
+    }
 
     return EXITO;
 }

@@ -637,6 +637,7 @@ int aplicar_recortar(tImagenBMP* imagen, int porcentaje)
 
     return estado;
 }
+
 int aplicar_achicar(tImagenBMP* imagen, int porcentaje)
 {
     int estado = EXITO;
@@ -696,6 +697,301 @@ int aplicar_achicar(tImagenBMP* imagen, int porcentaje)
 
     return estado;
 }
+
+int rotar_derecha(tImagenBMP *imagen)
+{
+    if(imagen == NULL){
+        puts("Error: no existe la imagen.");
+        return ERROR_ARGUMENTOS;
+    }
+
+    int i, j, codigo = EXITO;
+    int alto  = imagen->cabecera.info.altoImagen;
+    int ancho = imagen->cabecera.info.anchoImagen;
+    tda_matriz nueva_matriz;
+    tPixelBMP pixel;
+
+    //nueva matriz con dimensiones invertidas
+    codigo = matriz_crear(&nueva_matriz, ancho, alto, sizeof(tPixelBMP));
+    if(codigo != EXITO) return codigo;
+
+    
+    for(i = 0; i < alto; i++)//la fila i de la imagen original se convierte en la columna i de la nueva matriz, pero invertida
+    {
+        for(j = 0; j < ancho; j++)
+        {
+            codigo = matriz_get(&imagen->pixeles, i, j, &pixel);
+            if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+
+            codigo = matriz_set(&nueva_matriz, j, alto - 1 - i, &pixel);
+            if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+        }
+    }
+
+    //reemplazo la matriz original
+    matriz_destruir(&imagen->pixeles);
+    codigo = matriz_crear(&imagen->pixeles, ancho, alto, sizeof(tPixelBMP));
+    if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+
+    for(i = 0; i < ancho; i++)
+    {
+        for(j = 0; j < alto; j++)
+        {
+            codigo = matriz_get(&nueva_matriz, i, j, &pixel);
+            if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+
+            codigo = matriz_set(&imagen->pixeles, i, j, &pixel);
+            if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+        }
+    }
+
+    //actualizo dimensiones en la cabecera
+    imagen->cabecera.info.altoImagen  = ancho;
+    imagen->cabecera.info.anchoImagen = alto;
+
+    matriz_destruir(&nueva_matriz);
+    return EXITO;
+}
+
+int rotar_izquierda(tImagenBMP *imagen)
+{
+    if(imagen == NULL){
+        puts("Error: no existe la imagen.");
+        return ERROR_ARGUMENTOS;
+    }
+
+    int i, j, codigo = EXITO;
+    int alto  = imagen->cabecera.info.altoImagen;
+    int ancho = imagen->cabecera.info.anchoImagen;
+    tda_matriz nueva_matriz;
+    tPixelBMP pixel;
+
+    //nueva matriz con dimensiones invertidas
+    codigo = matriz_crear(&nueva_matriz, ancho, alto, sizeof(tPixelBMP));
+    if(codigo != EXITO) return codigo;
+
+    
+    for(i = 0; i < alto; i++)//hago lo mismo, pero la fila i de la imagen original se convierte en la columna i de la nueva matriz, sin invertir
+    {
+        for(j = 0; j < ancho; j++)
+        {
+            codigo = matriz_get(&imagen->pixeles, i, j, &pixel);
+            if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+
+            codigo = matriz_set(&nueva_matriz, ancho - 1 - j, i, &pixel);
+            if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+        }
+    }
+
+    //reemplazo la matriz original
+    matriz_destruir(&imagen->pixeles);
+    codigo = matriz_crear(&imagen->pixeles, ancho, alto, sizeof(tPixelBMP));
+    if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+
+    for(i = 0; i < ancho; i++)
+    {
+        for(j = 0; j < alto; j++)
+        {
+            codigo = matriz_get(&nueva_matriz, i, j, &pixel);
+            if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+
+            codigo = matriz_set(&imagen->pixeles, i, j, &pixel);
+            if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+        }
+    }
+
+    //actualizo dimensiones en la cabecera
+    imagen->cabecera.info.altoImagen  = ancho;
+    imagen->cabecera.info.anchoImagen = alto;
+
+    matriz_destruir(&nueva_matriz);
+    return EXITO;
+}
+
+int concatenar_horizontal(tImagenBMP *imagen1, tImagenBMP *imagen2)
+{
+    if(imagen1 == NULL || imagen2 == NULL){
+        puts("Error: no existe una de las imágenes.");
+        return ERROR_ARGUMENTOS;
+    }
+
+    int i, j, codigo = EXITO;
+    int alto1  = imagen1->cabecera.info.altoImagen;
+    int ancho1 = imagen1->cabecera.info.anchoImagen;
+    int alto2  = imagen2->cabecera.info.altoImagen;
+    int ancho2 = imagen2->cabecera.info.anchoImagen;
+
+    if(alto1 != alto2){
+        puts("Error: las imágenes deben tener la misma altura para concatenar horizontalmente.");
+        return ERROR_ARGUMENTOS;
+    }
+
+    tda_matriz nueva_matriz;
+    codigo = matriz_crear(&nueva_matriz, alto1, ancho1 + ancho2, sizeof(tPixelBMP));
+    if(codigo != EXITO) return codigo;
+
+    for(i = 0; i < alto1; i++)
+    {
+        for(j = 0; j < ancho1; j++)
+        {
+            tPixelBMP pixel;
+            codigo = matriz_get(&imagen1->pixeles, i, j, &pixel);
+            if(codigo != EXITO){ 
+                matriz_destruir(&nueva_matriz); 
+                return codigo; 
+            }
+
+            codigo = matriz_set(&nueva_matriz, i, j, &pixel);
+            if(codigo != EXITO){ 
+                matriz_destruir(&nueva_matriz); 
+                return codigo; 
+            }
+        }
+        for(j = 0; j < ancho2; j++)
+        {
+            tPixelBMP pixel;
+            codigo = matriz_get(&imagen2->pixeles, i, j, &pixel);
+            if(codigo != EXITO){ 
+                matriz_destruir(&nueva_matriz); 
+                return codigo; 
+            }
+
+            codigo = matriz_set(&nueva_matriz, i, j + ancho1, &pixel);
+            if(codigo != EXITO){ 
+                matriz_destruir(&nueva_matriz); 
+                return codigo; 
+            }
+        }
+    }
+
+    //reemplazo la matriz original
+    matriz_destruir(&imagen1->pixeles);
+    codigo = matriz_crear(&imagen1->pixeles, alto1, ancho1 + ancho2, sizeof(tPixelBMP));
+    if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+
+    for(i = 0; i < alto1; i++)
+    {
+        for(j = 0; j < ancho1 + ancho2; j++)
+        {
+            tPixelBMP pixel;
+            codigo = matriz_get(&nueva_matriz, i, j, &pixel);
+            if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+
+            codigo = matriz_set(&imagen1->pixeles, i, j, &pixel);
+            if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+        }
+    }
+
+    //actualizo dimensiones en la cabecera
+    int nuevo_ancho = ancho1 + ancho2;
+    int padding     = (4 - ((nuevo_ancho * sizeof(tPixelBMP)) % 4)) % 4;
+
+    imagen1->cabecera.info.anchoImagen   = nuevo_ancho;
+    imagen1->cabecera.info.altoImagen    = alto1;
+    imagen1->cabecera.info.tamImagen     = (nuevo_ancho * sizeof(tPixelBMP) + padding) * alto1;
+    imagen1->cabecera.archivo.tamArchivo = sizeof(BMPCabecera) + imagen1->cabecera.info.tamImagen;
+
+    matriz_destruir(&nueva_matriz);
+    return EXITO;
+}
+
+int concatenar_vertical(tImagenBMP *imagen1, tImagenBMP *imagen2)
+{
+    if(imagen1 == NULL || imagen2 == NULL){
+        puts("Error: no existe una de las imágenes.");
+        return ERROR_ARGUMENTOS;
+    }
+
+    int i, j, codigo = EXITO;
+    int alto1  = imagen1->cabecera.info.altoImagen;
+    int ancho1 = imagen1->cabecera.info.anchoImagen;
+    int alto2  = imagen2->cabecera.info.altoImagen;
+    int ancho2 = imagen2->cabecera.info.anchoImagen;
+
+    if(ancho1 != ancho2){
+        puts("Error: las imágenes deben tener la misma anchura para concatenar verticalmente.");
+        return ERROR_ARGUMENTOS;
+    }
+
+    tda_matriz nueva_matriz;
+    codigo = matriz_crear(&nueva_matriz, alto1 + alto2, ancho1, sizeof(tPixelBMP));
+    if(codigo != EXITO) return codigo;
+
+    for(i = 0; i < alto1; i++)
+    {
+        for(j = 0; j < ancho1; j++)
+        {
+            tPixelBMP pixel;
+            codigo = matriz_get(&imagen1->pixeles, i, j, &pixel);
+            if(codigo != EXITO){ 
+                matriz_destruir(&nueva_matriz); 
+                return codigo; 
+            }
+
+            codigo = matriz_set(&nueva_matriz, i, j, &pixel);
+            if(codigo != EXITO){ 
+                matriz_destruir(&nueva_matriz); 
+                return codigo; 
+            }
+        }
+    }
+    for(i = 0; i < alto2; i++)
+    {
+        for(j = 0; j < ancho2; j++)
+        {
+            tPixelBMP pixel;
+            codigo = matriz_get(&imagen2->pixeles, i, j, &pixel);
+            if(codigo != EXITO){ 
+                matriz_destruir(&nueva_matriz); 
+                return codigo; 
+            }
+
+            codigo = matriz_set(&nueva_matriz, i + alto1, j, &pixel);
+            if(codigo != EXITO){ 
+                matriz_destruir(&nueva_matriz); 
+                return codigo; 
+            }
+        }
+    }
+
+    //reemplazo la matriz original
+    matriz_destruir(&imagen1->pixeles);
+    codigo = matriz_crear(&imagen1->pixeles, alto1 + alto2, ancho1, sizeof(tPixelBMP));
+    if(codigo != EXITO){
+        matriz_destruir(&nueva_matriz);
+        return codigo; 
+    }
+
+    for(i = 0; i < alto1 + alto2; i++)
+    {
+        for(j = 0; j < ancho1; j++)
+        {
+            tPixelBMP pixel;
+            codigo = matriz_get(&nueva_matriz, i, j, &pixel);
+            if(codigo != EXITO){ 
+                matriz_destruir(&nueva_matriz); 
+                return codigo; 
+            }
+
+            codigo = matriz_set(&imagen1->pixeles, i, j, &pixel);
+            if(codigo != EXITO){ 
+                matriz_destruir(&nueva_matriz); 
+                return codigo; 
+            }
+        }
+    }
+
+    //actualizo dimensiones en la cabecera
+    int nuevo_alto = alto1 + alto2;
+    int padding   = (4 - ((ancho1 * sizeof(tPixelBMP)) % 4)) % 4;
+    imagen1->cabecera.info.altoImagen = nuevo_alto;
+    imagen1->cabecera.info.tamImagen = (ancho1 * sizeof(tPixelBMP) + padding) * nuevo_alto;
+    imagen1->cabecera.archivo.tamArchivo = sizeof(BMPCabecera) + imagen1->cabecera.info.tamImagen;
+
+    matriz_destruir(&nueva_matriz);
+    return EXITO;
+}
+
 
 /* "--negativo","--escala-de-grises",
     "--espejar-horizontal","--espejar-vertical",     SANTY

@@ -1,12 +1,12 @@
 #include "filtros.h"
 #include "matriz_tda.h"
 
-int bucle_filtros(t_Datos datos, tImagenBMP* imagen1)
+int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
 {
     int i;
     int codError = EXITO;
 
-    char nombreFinal[256] = "GAMMA.bmp"; 
+    char nombreFinal[256] = "GAMMA";
 
     for(i=0;i<datos.cant_filtros;i++)
     {
@@ -17,76 +17,137 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1)
 
         //FILTRO: NEGATIVO----------------------------------------------------------------------
         if(strcmp((datos.filtros_pedidos+i)->nombre,"--negativo")==0)
-        {   
+        {
+            puts("Aplicando filtro de negativo...");
             codError = aplicar_negativo(imagen1);
             if(codError != EXITO){
                 bmp_destruir_imagen(imagen1);
+                bmp_destruir_imagen(imagen2);
+                puts("Error al aplicar el filtro de negativo.");
                 return codError;
             }
 
-            adicionar_filtro(nombreFinal,
-                             (datos.filtros_pedidos+i)->nombre,
-                             (datos.filtros_pedidos+i)->parametro);
+            /*if(!adicionar_nombre_filtro(nombreFinal,
+                            (datos.filtros_pedidos+i)->nombre,
+                            (datos.filtros_pedidos+i)->parametro))
+            {
+                bmp_destruir_imagen(imagen1);
+                bmp_destruir_imagen(imagen2);
+                puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre del filtro.");
+                return ERROR_ARCHIVO;
+            }*/
 
         }
 
         //FILTRO: ESCALA DE GRISES ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--escala-de-grises")==0)
         {
+            puts("Aplicando filtro de escala de grises...");
             codError = aplicar_grises(imagen1);
             if(codError != EXITO){
                 bmp_destruir_imagen(imagen1);
+                bmp_destruir_imagen(imagen2);
+                puts("Error al aplicar el filtro de escala de grises");
                 return codError;
             }
 
-            adicionar_filtro(nombreFinal,
-                             (datos.filtros_pedidos+i)->nombre,
-                             (datos.filtros_pedidos+i)->parametro);
+            /*if(!adicionar_nombre_filtro(nombreFinal,
+                            (datos.filtros_pedidos+i)->nombre,
+                            (datos.filtros_pedidos+i)->parametro))
+            {
+                bmp_destruir_imagen(imagen1);
+                bmp_destruir_imagen(imagen2);
+                puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre del filtro.");
+                return ERROR_ARCHIVO;
+            }*/
         }
         //FILTRO: ESPEJAR HORIZONALMENTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--espejar-horizontal")==0)
         {
-            codError= espejar_horizontal(imagen1); 
+            puts("Aplicando filtro de espejar horizontal...");
+            codError= espejar_horizontal(imagen1);
             if(codError != EXITO){
                 bmp_destruir_imagen(imagen1);
+                bmp_destruir_imagen(imagen2);
+                puts("Error al aplicar el filtro de espejar horizontal.");
                 return codError;
             }
-            adicionar_filtro(nombreFinal,
+
+            /*if(!adicionar_nombre_filtro(nombreFinal,
                             (datos.filtros_pedidos+i)->nombre,
-                            (datos.filtros_pedidos+i)->parametro);
+                            (datos.filtros_pedidos+i)->parametro))
+            {
+                bmp_destruir_imagen(imagen1);
+                bmp_destruir_imagen(imagen2);
+                puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre del filtro.");
+                return ERROR_ARCHIVO;
+            }*/
         }
+        //FILTRO: ESPEJAR VERTICALMENTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--espejar-vertical")==0)
         {
-            codError= espejar_vertical(imagen1); 
+            puts("Aplicando filtro de espejar vertical...");
+            codError= espejar_vertical(imagen1);
             if(codError != EXITO){
                 bmp_destruir_imagen(imagen1);
+                bmp_destruir_imagen(imagen2);
+                puts("Error al aplicar el filtro de espejar vertical.");
                 return codError;
             }
-            adicionar_filtro(nombreFinal,
+
+            /*if(!adicionar_nombre_filtro(nombreFinal,
                             (datos.filtros_pedidos+i)->nombre,
-                            (datos.filtros_pedidos+i)->parametro);
+                            (datos.filtros_pedidos+i)->parametro))
+            {
+                bmp_destruir_imagen(imagen1);
+                bmp_destruir_imagen(imagen2);
+                puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre del filtro.");
+                return ERROR_ARCHIVO;
+            }*/
         }
+        //FILTRO: AUMENTAR CONTRASTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--aumentar-contraste")==0)
         {
+            puts("Aplicando filtro de aumentar contraste...");
             codError= aumentar_contraste(imagen1,(datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 bmp_destruir_imagen(imagen1);
+                bmp_destruir_imagen(imagen2);
+                puts("Error al aplicar el filtro de aumentar contraste.");
                 return codError;
             }
-            adicionar_filtro(nombreFinal,
+
+            /*if(!adicionar_nombre_filtro(nombreFinal,
                             (datos.filtros_pedidos+i)->nombre,
-                            (datos.filtros_pedidos+i)->parametro);
+                            (datos.filtros_pedidos+i)->parametro))
+            {
+                bmp_destruir_imagen(imagen1);
+                bmp_destruir_imagen(imagen2);
+                puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre del filtro.");
+                return ERROR_ARCHIVO;
+            }*/
         }
+        //FILTRO: REDUCIR CONTRASTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--reducir-contraste")==0)
         {
+            puts("Aplicando filtro de reducir contraste...");
             codError= reducir_contraste(imagen1,(datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 bmp_destruir_imagen(imagen1);
+                bmp_destruir_imagen(imagen2);
+                puts("Error al aplicar el filtro de reducir contraste.");
                 return codError;
             }
-            adicionar_filtro(nombreFinal,
+
+            /*if(!adicionar_nombre_filtro(nombreFinal,
                             (datos.filtros_pedidos+i)->nombre,
-                            (datos.filtros_pedidos+i)->parametro);
+                            (datos.filtros_pedidos+i)->parametro))
+{
+                bmp_destruir_imagen(imagen1);
+                bmp_destruir_imagen(imagen2);
+                puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre del filtro.");
+                return ERROR_ARCHIVO;
+            }*/
         }
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--tonalidad-azul")==0)
         {
@@ -108,19 +169,19 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1)
         {
             //aplicar_filtro11(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
         }
-        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--rotar-derecha")==0)
+        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--rotar-derecha")==0)//ANTO
         {
             //aplicar_filtro12(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
         }
-        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--rotar-izquierda")==0)
+        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--rotar-izquierda")==0)//ANTO
         {
             //aplicar_filtro13(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
         }
-        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--concatenar-horizontal")==0)
+        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--concatenar-horizontal")==0)//ANTO
         {
             //aplicar_filtro14(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
         }
-        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--concatenar-vertical")==0)
+        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--concatenar-vertical")==0)//ANTO
         {
             //aplicar_filtro15(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
         }
@@ -134,35 +195,60 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1)
         }
     }
 
+    if(!modificar_nombre_filtro(nombreFinal, datos))
+    {
+        bmp_destruir_imagen(imagen1);
+        bmp_destruir_imagen(imagen2);
+        puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre de los filtros.");
+        return codError;
+    }
+
     codError = bmp_escribir_imagen(nombreFinal, imagen1);
     if(codError != EXITO)
     {
         bmp_destruir_imagen(imagen1);
+        bmp_destruir_imagen(imagen2);
         return codError;
     }
 
+    bmp_destruir_imagen(imagen1); //destruyo la imagen procesada porque ya se guardo el resultado en un nuevo archivo, por lo que ya no se necesita
+    bmp_destruir_imagen(imagen2); //destruyo la segunda imagen porque ya no se va a usar
 
     return EXITO;
 }
 
-void adicionar_filtro(char *nombreArchivo, const char *nombreFiltro, int parametro)
+bool modificar_nombre_filtro(char *nombreArchivo, t_Datos info)
 {
-    strrchr(nombreArchivo, '.')[0] = '\0';//corto antes del .bmp
+    int ce = info.cant_filtros;
+    int i  = 0;
 
-    strcat(nombreArchivo, "_");
-    strcat(nombreArchivo, nombreFiltro+2); //asi no me salen los --
-
-    //agrego el parametro si existe
-    if(parametro != 0){
-        char param[16];
-        sprintf(param, "[%d]", parametro);
-        strcat(nombreArchivo, param);
+    //valido todos los nombres antes de modificar nada
+    for(int k = 0; k < ce; k++)
+    {
+        if((info.filtros_pedidos+k)->nombre == NULL)
+            return false;
     }
-    strcat(nombreArchivo,"_imagen.bmp");
+
+    while(i < ce && (strlen(nombreArchivo) + strlen((info.filtros_pedidos+i)->nombre) + 30) < 255)
+    {
+        strcat(nombreArchivo, "_");
+        strcat(nombreArchivo, (info.filtros_pedidos+i)->nombre + 2); //saco el --
+
+        if((info.filtros_pedidos+i)->parametro != 0)
+        {
+            char parametroAux[20];
+            sprintf(parametroAux, "[%d]", (info.filtros_pedidos+i)->parametro);
+            strcat(nombreArchivo, parametroAux);
+        }
+
+        i++;
+    }
+
+    strcat(nombreArchivo, "_imagen.bmp");
+    return true;
 }
 
 //FILTROS
-
 int aplicar_negativo (tImagenBMP* imagen)
 {
     int alto =imagen->cabecera.info.altoImagen;
@@ -234,7 +320,7 @@ int aplicar_grises (tImagenBMP* imagen)
     return EXITO;
 }
 
-int espejar_horizontal (tImagenBMP* imagen) 
+int espejar_horizontal (tImagenBMP* imagen)
 {
     int alto =imagen->cabecera.info.altoImagen;
     int ancho =imagen->cabecera.info.anchoImagen;

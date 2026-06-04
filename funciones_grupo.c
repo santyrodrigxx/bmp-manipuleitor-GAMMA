@@ -54,6 +54,35 @@ int procesar_imagen(int argc, char *argv[])
     printf("\nIMAGENES: %d", datos.cant_imagenes);
     printf("\nFILTROS: %d", datos.cant_filtros); // DEBUG
 
+    if(datos.con_help)
+    {
+        printf("\n\n========================================================\n");
+        printf("BMPMANIPULEITOR - Manipulador de imagenes BMP 24 bits\n\n");
+        printf("GRUPO: GAMMA\nIntegrantes:\n");
+        printf("\t1. 45928557 - GAHONA, Antonella\n");
+        printf("\t2. 47131227 - RODRIGUEZ, Santiago Tomas\n");
+        printf("\t3. 94275736 - AVALOS IRRAZABAL, Joel Antonio\n\n");
+        printf(" Uso: bmpmanipuleitor.exe [OPCIONES] [IMAGENES.bmp]\n\n");
+        printf(" EJEMPLOS:\n");
+        printf("   bmpmanipuleitor.exe --negativo foto.bmp\n");
+        printf("   bmpmanipuleitor.exe --info imagen.bmp --validar\n");
+        printf("   bmpmanipuleitor.exe foto.bmp --verbose --escala-de-grises\n\n");
+        printf("FILTROS:");
+        printf("   --comodin: \n");
+        printf("========================================================\n\n");
+    }
+
+    if(datos.con_verbose)
+    {
+        printf("\n\n[INFO] Iniciando bmpmanipuleitor...\n");
+        printf("[INFO] Argumentos detectados:");
+        for(int i=0;i<datos.cant_filtros;i++)
+        {
+            printf("%s ", (datos.filtros_pedidos+i)->nombre );
+        }
+        printf("\n[INFO] Cargando archivo: %s", datos.imagen1);
+    }
+
     tImagenBMP imagen1;
     tImagenBMP imagen2;
     int estado;
@@ -67,6 +96,12 @@ int procesar_imagen(int argc, char *argv[])
         bmp_destruir_imagen(&imagen1);
         bmp_destruir_imagen(&imagen2);
         return estado;
+    }
+
+    if(estado==EXITO && datos.con_verbose)
+    {
+        printf("[INFO] Validando header BMP...\n");
+        printf("[INFO] Archivo valido - Dimensiones: %d x %d, Tamanio: %d bytes\n",imagen1.cabecera.info.anchoImagen,imagen1.cabecera.info.altoImagen, imagen1.cabecera.info.tamImagen );
     }
 
     //CARGA DE LA SEGUNDA IMAGEN:------------------------------------------

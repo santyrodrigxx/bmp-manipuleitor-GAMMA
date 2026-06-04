@@ -4,7 +4,7 @@
 #include "funciones_grupo.h"
 #include "bmp.h"
 
-int bucle_filtros(t_Datos datos, tImagenBMP* imagen1);
+int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2);
 int aplicar_negativo(tImagenBMP* imagen);
 int aplicar_grises (tImagenBMP* imagen);
 int espejar_horizontal (tImagenBMP* imagen);
@@ -18,7 +18,7 @@ int aplicar_recortar(tImagenBMP* imagen, int porcentaje);
 int aplicar_achicar(tImagenBMP* imagen, int porcentaje);
 
 //Funciones auxiliares
-void adicionar_filtro(char *nombreArchivo, const char *nombreFiltro, int parametro);
+bool modificar_nombre_filtro(char *nombreArchivo, t_Datos info);
 void acomodar(double* color);
 
 

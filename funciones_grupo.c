@@ -160,6 +160,8 @@ int procesar_imagen(int argc, char *argv[])
 
     if(datos.cant_filtros==0) //si no hay filtros ni entra al bucle
     {
+        bmp_destruir_imagen(&imagen1);
+        bmp_destruir_imagen(&imagen2);
         return EXITO;
     }
 

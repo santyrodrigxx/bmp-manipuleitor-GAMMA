@@ -11,14 +11,18 @@ int espejar_horizontal (tImagenBMP* imagen);
 int espejar_vertical (tImagenBMP* imagen);
 int aumentar_contraste (tImagenBMP* imagen, const int parametro);
 int reducir_contraste (tImagenBMP* imagen, const int parametro);
-void aplicar_tonalidad_azul(tImagenBMP* imagen, int porcentaje);
-void aplicar_tonalidad_verde(tImagenBMP* imagen, int porcentaje);
-void aplicar_tonalidad_roja(tImagenBMP* imagen, int porcentaje);
+int aplicar_tonalidad_azul(tImagenBMP* imagen, int porcentaje);
+int aplicar_tonalidad_verde(tImagenBMP* imagen, int porcentaje);
+int aplicar_tonalidad_roja(tImagenBMP* imagen, int porcentaje);
 int aplicar_recortar(tImagenBMP* imagen, int porcentaje);
 int aplicar_achicar(tImagenBMP* imagen, int porcentaje);
+int rotar_derecha(tImagenBMP *imagen);
+int rotar_izquierda(tImagenBMP *imagen);
+int concatenar_horizontal(tImagenBMP *imagen1, tImagenBMP *imagen2);
+int concatenar_vertical(tImagenBMP *imagen1, tImagenBMP *imagen2);
 
 //Funciones auxiliares
-bool modificar_nombre_filtro(char *nombreArchivo, t_Datos info);
+void modificar_nombre_filtro(char *nombreArchivo, t_Datos info, int cont);
 void acomodar(double* color);
 
 

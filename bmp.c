@@ -243,10 +243,9 @@ void bmp_destruir_imagen(tImagenBMP *imagen)
 
 int bmp_copiar_imagen(tImagenBMP* destino, const tImagenBMP* origen)
 {
-    // 1. Escudo de seguridad
     if (destino == NULL || origen == NULL)
     {
-        return ERROR_ARGUMENTOS; // O el código de error que manejen
+        return ERROR_ARGUMENTOS;
     }
 
     //copia cabeceras
@@ -271,10 +270,10 @@ int bmp_copiar_imagen(tImagenBMP* destino, const tImagenBMP* origen)
     {
         for (int j = 0; j < ancho; j++)
         {
-            // Extraemos el píxel de la matriz origen
+            //saco origen
             matriz_get(&origen->pixeles, i, j, &pixel_aux);
             
-            // Lo guardamos en la matriz destino
+            //guardo en dest
             matriz_set(&destino->pixeles, i, j, &pixel_aux);
         }
     }

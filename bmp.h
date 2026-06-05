@@ -84,14 +84,14 @@ typedef struct
     PIXELES
 } modoBMP;*/ //para que la funcion de escritura pueda escribir solo la cabecera o solo los pixeles, dependiendo del modo que se le pase como argumento
 
-int bmp_leer_imagen(const char *, tImagenBMP *);
+int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen, bool info, bool validar);
 //llama a matriz crear para reservar la memoria de la matriz de pixeles, y luego lee los pixeles del archivo y los almacena en la matriz
 
 int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen);
 //llama a matriz obtener ptr para obtener la direccion de cada pixel en la matriz,
 //y luego escribe los pixeles en el archivo, respetando el formato BMP (bottom-up, padding, etc)
 
-int bmp_validar_cabecera(const BMPCabecera *cabecera);
+int bmp_validar_cabecera(const BMPCabecera *cabecera, bool validar);
 /*tengo que ver el tema de las imagenes "bottom-up" (de abajo hacia arriba) o "top-down" (de arriba hacia abajo):
 porque eso afecta el orden de lectura de los pixeles, y por lo tanto la validacion de la cabecera.
 Si es "top-down" el alto de la imagen es negativo, y si es "bottom-up" el alto de la imagen es positivo,
@@ -102,8 +102,10 @@ o validar que el alto de la imagen sea diferente de cero para admitir ambas tipo
 void bmp_destruir_imagen(tImagenBMP *imagen);
 //llama a matriz destruir para liberar la memoria de la matriz de pixeles, y luego libera la memoria del struct tImagenBMP
 
-void bmp_imprimir_info(const tImagenBMP *imagen, const char *nombreArchivo);
+void bmp_imprimir_info(const tImagenBMP *imagen, const char *nombreArchivo, bool info);
 //podemos llamarla en cualquier momento del programa
+
+/*int bmp_copiar_imagen(tImagenBMP* destino, const tImagenBMP* origen);*/
 
 
 #endif // BMP_H_INCLUDED

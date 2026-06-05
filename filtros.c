@@ -13,13 +13,13 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
     {
         if(datos.con_verbose == true)
         {
-            printf("Aplicando filtro %s\n", (datos.filtros_pedidos+i)->nombre);
+            printf("[INFO] Aplicando filtro: %s\n", (datos.filtros_pedidos+i)->nombre);
         }
 
         //FILTRO: NEGATIVO----------------------------------------------------------------------
         if(strcmp((datos.filtros_pedidos+i)->nombre,"--negativo")==0)
         {
-            puts("Aplicando filtro de negativo...");
+            //puts("Aplicando filtro de negativo...");
             codError = aplicar_negativo(imagen1);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de negativo.");
@@ -36,7 +36,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: ESCALA DE GRISES ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--escala-de-grises")==0)
         {
-            puts("Aplicando filtro de escala de grises...");
+            //puts("Aplicando filtro de escala de grises...");
             codError = aplicar_grises(imagen1);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de escala de grises");
@@ -52,7 +52,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: ESPEJAR HORIZONALMENTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--espejar-horizontal")==0)
         {
-            puts("Aplicando filtro de espejar horizontal...");
+            //puts("Aplicando filtro de espejar horizontal...");
             codError= espejar_horizontal(imagen1);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de espejar horizontal.");
@@ -68,7 +68,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: ESPEJAR VERTICALMENTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--espejar-vertical")==0)
         {
-            puts("Aplicando filtro de espejar vertical...");
+            //puts("Aplicando filtro de espejar vertical...");
             codError= espejar_vertical(imagen1);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de espejar vertical.");
@@ -84,7 +84,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: AUMENTAR CONTRASTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--aumentar-contraste")==0)
         {
-            puts("Aplicando filtro de aumentar contraste...");
+            //puts("Aplicando filtro de aumentar contraste...");
             codError= aumentar_contraste(imagen1,(datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de aumentar contraste.");
@@ -100,7 +100,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: REDUCIR CONTRASTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--reducir-contraste")==0)
         {
-            puts("Aplicando filtro de reducir contraste...");
+            //puts("Aplicando filtro de reducir contraste...");
             codError= reducir_contraste(imagen1,(datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de reducir contraste.");
@@ -116,7 +116,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: TONALIDAD AZUL ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--tonalidad-azul")==0)
         {
-            puts("Aplicando filtro de tonalidad azul...");
+            //puts("Aplicando filtro de tonalidad azul...");
             codError = aplicar_tonalidad_azul(imagen1, (datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de tonalidad azul.");
@@ -134,7 +134,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: TONALIDAD VERDE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--tonalidad-verde")==0)
         {
-            puts("Aplicando filtro de tonalidad verde...");
+            //puts("Aplicando filtro de tonalidad verde...");
             codError = aplicar_tonalidad_verde(imagen1, (datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de tonalidad verde.");
@@ -151,7 +151,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: TONALIDAD ROJA ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--tonalidad-roja")==0)
         {
-            puts("Aplicando filtro de tonalidad roja...");
+            //puts("Aplicando filtro de tonalidad roja...");
             codError = aplicar_tonalidad_roja(imagen1, (datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de tonalidad roja.");
@@ -168,7 +168,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: RECORTAR ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--recortar")==0)
         {
-            puts("Aplicando filtro de recortar...");
+            //puts("Aplicando filtro de recortar...");
             codError = aplicar_recortar(imagen1, (datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de recortar.");
@@ -185,7 +185,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: ACHICAR ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--achicar")==0)
         {
-            puts("Aplicando filtro de achicar...");
+            //puts("Aplicando filtro de achicar...");
             codError = aplicar_achicar(imagen1, (datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de achicar.");
@@ -202,7 +202,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: ROTAR DERECHA ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--rotar-derecha")==0)//ANTO
         {
-            puts("Aplicando filtro de rotar derecha...");
+            //puts("Aplicando filtro de rotar derecha...");
             codError = rotar_derecha(imagen1);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de rotar derecha.");
@@ -217,7 +217,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: ROTAR IZQUIERDA ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--rotar-izquierda")==0)
         {
-            puts("Aplicando filtro de rotar izquierda...");
+            //puts("Aplicando filtro de rotar izquierda...");
             codError = rotar_izquierda(imagen1);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de rotar izquierda.");
@@ -232,7 +232,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: CONCATENAR HORIZONTAL ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--concatenar-horizontal")==0)
         {
-            puts("Aplicando filtro de concatenar horizontal...");
+            //puts("Aplicando filtro de concatenar horizontal...");
             codError = concatenar_horizontal(imagen1, imagen2);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de concatenar horizontal.");
@@ -247,7 +247,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: CONCATENAR VERTICAL ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--concatenar-vertical")==0)
         {
-            puts("Aplicando filtro de concatenar vertical...");
+            //puts("Aplicando filtro de concatenar vertical...");
             codError = concatenar_vertical(imagen1, imagen2);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de concatenar vertical.");
@@ -262,7 +262,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         //FILTRO: COMODIN ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--comodin")==0)
         {
-            puts("Aplicando filtro comodin...");
+            //puts("Aplicando filtro comodin...");
             codError = aplicar_chroma(imagen1,imagen2);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro comodin.");
@@ -278,6 +278,12 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         {
             printf("Filtro no reconocido: %s\n", (datos.filtros_pedidos+i)->nombre);
         }
+
+        if(datos.con_verbose == true)
+        {
+            printf("[INFO] Guardando resultado: GAMMA_%s_%s\n", (datos.filtros_pedidos+i)->nombre,datos.imagen1);
+            printf("[INFO] Filtro %s aplicado exitosamente\n", (datos.filtros_pedidos+i)->nombre);
+        }
     }
 
 
@@ -290,7 +296,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
 
 void modificar_nombre_filtro(char *nombreArchivo, t_Datos info, int cont)
 {
-    puts("Generando nombre del archivo ...");
+    //puts("Generando nombre del archivo ...");
     strcpy(nombreArchivo, "GAMMA");
 
     strcat(nombreArchivo, "_");
@@ -305,7 +311,7 @@ void modificar_nombre_filtro(char *nombreArchivo, t_Datos info, int cont)
 
     strcat(nombreArchivo, "_");
     strcat(nombreArchivo, info.imagen1);
-    printf("Archivo %s generado correctamente.\n", nombreArchivo);
+    //printf("Archivo %s generado correctamente.\n", nombreArchivo);
 }
 
 //FILTROS

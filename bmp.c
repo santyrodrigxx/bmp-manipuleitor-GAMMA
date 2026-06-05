@@ -6,7 +6,7 @@
 //pero eso afecta a la matriz de p�xeles, no al header.
 
 
-int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen) //hasta el .bmp??
+int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen, bool info, bool validar) //hasta el .bmp??
 {
     if (imagen == NULL) {
         puts("Error: imagen nula.");
@@ -45,12 +45,12 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen) //hasta el .b
 
     //VALIDACION DE CONDICIONES (compresion, profundidad, tama�o y tipo de archivo)
     //No valido extension pq puede ser que la extension este mal y sin embargo el archivo sea BMP
-    if(bmp_validar_cabecera(&imagen->cabecera) != EXITO){
+    if(bmp_validar_cabecera(&imagen->cabecera,validar) != EXITO){
         fclose(arc_imagen);
         return BMP_INVALIDO;
     }
 
-    bmp_imprimir_info(imagen, nombreArchivo);
+    bmp_imprimir_info(imagen, nombreArchivo, info);
 
     int alto = imagen->cabecera.info.altoImagen;
     int ancho = imagen->cabecera.info.anchoImagen;
@@ -106,23 +106,35 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen) //hasta el .b
 }
 
 
-int bmp_validar_cabecera(const BMPCabecera *cabecera){
+int bmp_validar_cabecera(const BMPCabecera *cabecera, bool validar){
 
     unsigned char *dato = (unsigned char*)&cabecera->archivo.firma; //va -> pq lo llamo como puntero
     int comp = cabecera->info.compresion;
     int profundidad = cabecera->info.bitsPorPixel;
 
     if (dato[0] != 'B' || dato [1] != 'M'){
+        if(validar==true)
+        {
+            printf("\n\nValidando imagen_corrupta.bmp...\nSignature BMP valido\nERROR: No es un BMP valido. FIRMA INCORRECTA\nARCHIVO INVALIDO - No se puede procesar\n");
+        }
         puts("Error: el archivo no es un BMP válido (firma incorrecta).");
         return BMP_INVALIDO;
     }
 
     if (comp != 0){
+        if(validar==true)
+        {
+            printf("\n\nValidando imagen_corrupta.bmp...\nSignature BMP valido\nERROR: No es un BMP valido. COMPRESION NO SOPORTADA\nARCHIVO INVALIDO - No se puede procesar\n");
+        }
         puts("Error: el archivo BMP no es válido (compresión no soportada).");
         return BMP_INVALIDO;
     }
 
     if (profundidad != 24){
+        if(validar==true)
+        {
+            printf("\n\nValidando imagen_corrupta.bmp...\nSignature BMP valido\nERROR: No es un BMP valido. PROFUNDIDAD DE COLOR INCORRECTA (%d de 24)\nARCHIVO INVALIDO - No se puede procesar\n",profundidad);
+        }
         puts("Error: el archivo BMP no es válido (profundidad de color no soportada).");
         return BMP_INVALIDO;
     }
@@ -131,10 +143,12 @@ int bmp_validar_cabecera(const BMPCabecera *cabecera){
 }
 
 
-void bmp_imprimir_info(const tImagenBMP *imagen, const char *nombreArchivo)
+void bmp_imprimir_info(const tImagenBMP *imagen, const char *nombreArchivo, bool info)
 {
     int padding = (4 - ((imagen->cabecera.info.anchoImagen * sizeof(tPixelBMP)) % 4)) % 4;
 
+    if(info==true)
+    {
     printf("\n\nInformacion del archivo BMP:\n"
            "  Nombre:               %s\n"
            "  Tamanio del archivo:  %u bytes\n"
@@ -152,6 +166,7 @@ void bmp_imprimir_info(const tImagenBMP *imagen, const char *nombreArchivo)
            imagen->cabecera.archivo.posPixeles,
            imagen->cabecera.info.tamImagen,
            padding);
+    }
 }
 
 
@@ -183,7 +198,7 @@ int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
     fwrite(&imagen->cabecera.info.coloresUsados, sizeof(unsigned int), 1,  nueva_imagen);
     fwrite(&imagen->cabecera.info.coloresImportantes, sizeof(unsigned int), 1,  nueva_imagen);
 
-    puts("Cabecera cargada...");
+    //puts("Cabecera cargada...");
 
     int alto  = imagen->cabecera.info.altoImagen;
     int ancho = imagen->cabecera.info.anchoImagen;
@@ -212,7 +227,7 @@ int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
             fwrite(&cero, sizeof(unsigned char), 1, nueva_imagen);
     }//cierre FOR anidado
 
-    puts("Pixeles cargados con exito!");
+    //puts("Pixeles cargados con exito!");
 
     fclose(nueva_imagen);
     return EXITO;
@@ -225,3 +240,44 @@ void bmp_destruir_imagen(tImagenBMP *imagen)
         return;
     matriz_destruir(&imagen->pixeles);
 }
+
+/*int bmp_copiar_imagen(tImagenBMP* destino, const tImagenBMP* origen)
+{
+    // 1. Escudo de seguridad
+    if (destino == NULL || origen == NULL)
+    {
+        return ERROR_ARGUMENTOS; // O el código de error que manejen
+    }
+
+    //copia cabeceras
+    destino->cabecera = origen->cabecera;
+
+    //extraigo las dimensiones 
+    int ancho = origen->cabecera.info.anchoImagen;
+    int alto = origen->cabecera.info.altoImagen;
+
+    // inicializo y reservo memoria para la matriz destino
+    // paso tPixelBMP para el tamaño del elemento
+    int codError = matriz_crear(&destino->pixeles, alto, ancho, sizeof(tPixelBMP));
+    if (codError != EXITO)
+    {
+        return codError; 
+    }
+
+    tPixelBMP pixel_aux;
+
+    // recorro la matriz píxel por píxel para clonar los colores
+    for (int i = 0; i < alto; i++)
+    {
+        for (int j = 0; j < ancho; j++)
+        {
+            // Extraemos el píxel de la matriz origen
+            matriz_get(&origen->pixeles, i, j, &pixel_aux);
+            
+            // Lo guardamos en la matriz destino
+            matriz_set(&destino->pixeles, i, j, &pixel_aux);
+        }
+    }
+
+    return EXITO;
+}*/

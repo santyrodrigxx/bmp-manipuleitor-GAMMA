@@ -45,14 +45,14 @@ int procesar_imagen(int argc, char *argv[])
         return ERROR_ARGUMENTOS;
     }
 
-    for(int j=0;j<datos.cant_filtros;j++)
+    /*for(int j=0;j<datos.cant_filtros;j++)
     {
         printf("\n%s", (datos.filtros_pedidos+j)->nombre);
         printf("\n%d", (datos.filtros_pedidos+j)->parametro);
     }
 
     printf("\nIMAGENES: %d", datos.cant_imagenes);
-    printf("\nFILTROS: %d", datos.cant_filtros); // DEBUG
+    printf("\nFILTROS: %d", datos.cant_filtros); // DEBUG*/
 
     if(datos.con_help)
     {
@@ -68,7 +68,7 @@ int procesar_imagen(int argc, char *argv[])
         printf("   bmpmanipuleitor.exe --info imagen.bmp --validar\n");
         printf("   bmpmanipuleitor.exe foto.bmp --verbose --escala-de-grises\n\n");
         printf("FILTROS:");
-        printf("   --comodin: si la imagen1 tiene un fondo verde, se cambia por los pixeles de la imagen2. NECESARIO INGRESAR DOS IMAGENES\n");
+        printf("   --comodin: si la imagen1 tiene un fondo verde, se cambia por los pixeles de la imagen2. \n\t\tNECESARIO INGRESAR DOS IMAGENES\n");
         printf("========================================================\n\n");
     }
 
@@ -80,7 +80,7 @@ int procesar_imagen(int argc, char *argv[])
         {
             printf("%s ", (datos.filtros_pedidos+i)->nombre );
         }
-        printf("\n[INFO] Cargando archivo: %s", datos.imagen1);
+        printf("\n[INFO] Cargando archivo: %s\n", datos.imagen1);
     }
 
     tImagenBMP imagen1;
@@ -92,7 +92,7 @@ int procesar_imagen(int argc, char *argv[])
 
     //CARGA DE LA PRIMER IMAGEN:-----------------------------------------
     
-    estado=bmp_leer_imagen(datos.imagen1, &imagen1);
+    estado=bmp_leer_imagen(datos.imagen1, &imagen1, datos.con_info, datos.con_validar);
     if(estado!=EXITO)
     {
         printf("Error al cargar la primer imagen");
@@ -111,12 +111,18 @@ int procesar_imagen(int argc, char *argv[])
         printf("[INFO] Datos cargados correctamente\n");
     }
 
+    if(estado==EXITO && datos.con_validar)
+    {
+        printf("\n\n\nValidando %s...\nSignature BMP valido\nProfundidad de 24 bits confirmada\nCompresion: No comprimido\nARCHIVO VALIDO - Listo para procesar\n\n", datos.imagen1) ;
+
+    }
+
     //CARGA DE LA SEGUNDA IMAGEN:------------------------------------------
     //Si no se cargan dos imagenes, se carga la misma imagen en ambos punteros para que los filtros que necesitan dos imagenes puedan funcionar sin problemas
    
     if(datos.cant_imagenes==2)
     {
-        estado=bmp_leer_imagen(datos.imagen2, &imagen2);
+        estado=bmp_leer_imagen(datos.imagen2, &imagen2,datos.con_info,datos.con_validar);
         if(estado!=EXITO)
         {
             printf("Error al cargar la segunda imagen");
@@ -133,9 +139,14 @@ int procesar_imagen(int argc, char *argv[])
             printf("[INFO] Leyendo datos de imagen...\n");
             printf("[INFO] Datos cargados correctamente\n");
         }
+        if(estado==EXITO && datos.con_validar)
+        {
+            printf("\n\n\nValidando %s...\nSignature BMP valido\nProfundidad de 24 bits confirmada\nCompresion: No comprimido\nARCHIVO VALIDO - Listo para procesar\n\n", datos.imagen2) ;
+
+        }
     }
     else{
-        estado = bmp_leer_imagen(datos.imagen1, &imagen2);
+        estado = bmp_leer_imagen(datos.imagen1, &imagen2,false,false);
         if(estado!=EXITO)
         {
             bmp_destruir_imagen(&imagen1);
@@ -145,7 +156,12 @@ int procesar_imagen(int argc, char *argv[])
         }
     }
 
-    printf("\n\nAPLICADO DE FILTROS ----\n");
+    //printf("\n\nAPLICADO DE FILTROS ----\n");
+
+    if(datos.cant_filtros==0) //si no hay filtros ni entra al bucle
+    {
+        return EXITO;
+    }
 
     estado = bucle_filtros(datos,&imagen1,&imagen2);
     if(estado != EXITO){
@@ -195,7 +211,7 @@ int leer_arg(int argc, char* argv[], const char* filtros[], const char* utilidad
                     (datos->filtros_pedidos + datos->cant_filtros)->parametro = parametro_extraido; //guardo el parametro
                     datos->cant_filtros++; //aumento el contador
 
-                    printf("El argumento numero %d: %s es un filtro valido, guardado\n",i, *(argv+i));
+                    //printf("El argumento numero %d: %s es un filtro valido, guardado\n",i, *(argv+i));
 
                     if(necesita_dos_imagenes(copia)) //se fija si son necesarias dos imagenes
                     {
@@ -215,8 +231,7 @@ int leer_arg(int argc, char* argv[], const char* filtros[], const char* utilidad
                 if (strcmp(*(argv+i), "--help") == 0)    datos->con_help = true;
                 if (strcmp(*(argv+i), "--info") == 0)    datos->con_info = true;
                 if (strcmp(*(argv+i), "--validar") == 0) datos->con_validar = true;
-                printf("El argumento numero %d: %s es una utilidad valida\n",i, *(argv+i));
-                //usar_utilidad;
+                //printf("El argumento numero %d: %s es una utilidad valida\n",i, *(argv+i));
             }
             else
             {
@@ -230,7 +245,7 @@ int leer_arg(int argc, char* argv[], const char* filtros[], const char* utilidad
             {
                 if(datos->cant_imagenes<2) //si todavia no hay dos imagenes
                 {
-                    printf("El argumento numero %d: %s es una imagen\n",i,*(argv+i));
+                    //printf("El argumento numero %d: %s es una imagen\n",i,*(argv+i));
                     if(datos->cant_imagenes==0)
                     {
                         strncpy(datos->imagen1, *(argv+i), sizeof(datos->imagen1) - 1);

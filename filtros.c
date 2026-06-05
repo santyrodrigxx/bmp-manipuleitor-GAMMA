@@ -989,7 +989,7 @@ int concatenar_horizontal(tImagenBMP *imagen1, tImagenBMP *imagen2)
         return codigo;
 
     tPixelBMP pixel;
-    tPixelBMP negro = {0, 0, 0};
+    tPixelBMP lila = {200, 120, 200};
 
     for(int i = 0; i < nuevo_alto; i++)
     {
@@ -997,8 +997,8 @@ int concatenar_horizontal(tImagenBMP *imagen1, tImagenBMP *imagen2)
         {
             if(j < ancho1)
             {/*Zona de imagen1
-                Si la fila existe en imagen1 copio el pixel.
-                Si no existe completo con negro.*/
+                Si la fila existe en imagen1 copio el pixel
+                Si no existe completo con lilaa*/
                 if(i < alto1)
                 {
                     codigo = matriz_get(&imagen1->pixeles, i, j, &pixel);
@@ -1010,7 +1010,7 @@ int concatenar_horizontal(tImagenBMP *imagen1, tImagenBMP *imagen2)
                 }
                 else
                 {
-                    pixel = negro;
+                    pixel = lila;
                 }
             }
             else
@@ -1030,7 +1030,7 @@ int concatenar_horizontal(tImagenBMP *imagen1, tImagenBMP *imagen2)
                 }
                 else
                 {
-                    pixel = negro;
+                    pixel = lila;
                 }
             }
 
@@ -1109,7 +1109,7 @@ int concatenar_vertical(tImagenBMP *imagen1, tImagenBMP *imagen2)
         return codigo;
 
     tPixelBMP pixel;
-    tPixelBMP negro = {0, 0, 0};
+    tPixelBMP bordo = {30, 0, 128};
 
     for(int i = 0; i < nuevo_alto; i++)
     {
@@ -1118,7 +1118,7 @@ int concatenar_vertical(tImagenBMP *imagen1, tImagenBMP *imagen2)
             if(i < alto1)
             {/* Zona de imagen1
                 Si la columna existe copio
-                Si no existe completo con negro*/
+                Si no existe completo con bordo*/
                 if(j < ancho1)
                 {
                     codigo = matriz_get(&imagen1->pixeles, i, j, &pixel);
@@ -1130,7 +1130,7 @@ int concatenar_vertical(tImagenBMP *imagen1, tImagenBMP *imagen2)
                 }
                 else
                 {
-                    pixel = negro;
+                    pixel = bordo;
                 }
             }
             else
@@ -1150,7 +1150,7 @@ int concatenar_vertical(tImagenBMP *imagen1, tImagenBMP *imagen2)
                 }
                 else
                 {
-                    pixel = negro;
+                    pixel = bordo;
                 }
             }
 

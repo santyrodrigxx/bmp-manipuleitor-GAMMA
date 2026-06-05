@@ -20,6 +20,7 @@ int rotar_derecha(tImagenBMP *imagen);
 int rotar_izquierda(tImagenBMP *imagen);
 int concatenar_horizontal(tImagenBMP *imagen1, tImagenBMP *imagen2);
 int concatenar_vertical(tImagenBMP *imagen1, tImagenBMP *imagen2);
+int aplicar_chroma(tImagenBMP* img_original, const tImagenBMP* img_fondo);
 
 //Funciones auxiliares
 void modificar_nombre_filtro(char *nombreArchivo, t_Datos info, int cont);

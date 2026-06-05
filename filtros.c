@@ -263,7 +263,7 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--comodin")==0)
         {
             puts("Aplicando filtro comodin...");
-            //APLICAR FUNCION COMODIN...
+            codError = aplicar_chroma(imagen1,imagen2);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro comodin.");
                 return codError;
@@ -303,7 +303,8 @@ void modificar_nombre_filtro(char *nombreArchivo, t_Datos info, int cont)
         strcat(nombreArchivo, parametroAux);
     }
 
-    strcat(nombreArchivo, "_unlam.bmp");
+    strcat(nombreArchivo, "_");
+    strcat(nombreArchivo, info.imagen1);
     printf("Archivo %s generado correctamente.\n", nombreArchivo);
 }
 
@@ -1124,17 +1125,59 @@ int concatenar_vertical(tImagenBMP *imagen1, tImagenBMP *imagen2)
     return EXITO;
 }
 
+int aplicar_chroma(tImagenBMP* img_original, const tImagenBMP* img_fondo)
+{
+    if (img_original == NULL || img_fondo == NULL)
+    {
+        return ERROR_ARGUMENTOS;
+    }
 
-/* "--negativo","--escala-de-grises",
-    "--espejar-horizontal","--espejar-vertical",     SANTY
-    "--aumentar-contraste"
+    int ancho_orig = img_original->cabecera.info.anchoImagen;
+    int alto_orig = img_original->cabecera.info.altoImagen;
+    int ancho_fondo = img_fondo->cabecera.info.anchoImagen;
+    int alto_fondo = img_fondo->cabecera.info.altoImagen;
 
-    "--reducir-contraste", "--tonalidad-azul",
-    "--tonalidad-verde",
-    "--tonalidad-roja","--recortar",
+    //configuración del chroma
+    int umbral_verde_minimo = 35;
+    int dominancia_verde = 20;
 
-    "--achicar","--rotar-derecha",
-    "--rotar-izquierda","--concatenar-horizontal",
-    "--concatenar-vertical","--comodin"*/
+    tPixelBMP pixel_actual;
+    tPixelBMP pixel_fondo;
+
+    //recorre la matriz de la imagen original
+    for (int i = 0; i < alto_orig; i++)
+    {
+        for (int j = 0; j < ancho_orig; j++)
+        {
+            // tomo el píxel actual (el que tiene la pantalla verde)
+            matriz_get(&img_original->pixeles, i, j, &pixel_actual);
+
+            //calcula si hay una buena proporcion de verde como para aplicar el chroma
+            if (pixel_actual.verde > umbral_verde_minimo &&
+                (pixel_actual.verde - pixel_actual.rojo) > dominancia_verde &&
+                (pixel_actual.verde - pixel_actual.azul) > dominancia_verde)
+            {
+                // uso double para no perder precisión en la división y luego casteamos a entero
+                int fondo_i = (int)((double)i / alto_orig * alto_fondo);
+                int fondo_j = (int)((double)j / ancho_orig * ancho_fondo);
+
+                // evito desbordar los límites por redondeo
+                if (fondo_i >= alto_fondo) fondo_i = alto_fondo - 1;
+                if (fondo_j >= ancho_fondo) fondo_j = ancho_fondo - 1;
+                if (fondo_i < 0) fondo_i = 0;
+                if (fondo_j < 0) fondo_j = 0;
+
+                //saco el pixel proporcional de la otra imagen
+                matriz_get(&img_fondo->pixeles, fondo_i, fondo_j, &pixel_fondo);
+
+                //guardo ese píxel en la imagen original en la posición (i, j)
+                matriz_set(&img_original->pixeles, i, j, &pixel_fondo);
+            }
+        }
+    }
+
+    return EXITO;
+}
+
 
 

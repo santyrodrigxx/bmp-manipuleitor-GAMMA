@@ -87,6 +87,9 @@ int procesar_imagen(int argc, char *argv[])
     tImagenBMP imagen2;
     int estado;
 
+    memset(&imagen1, 0, sizeof(tImagenBMP));
+    memset(&imagen2, 0, sizeof(tImagenBMP));
+
     //CARGA DE LA PRIMER IMAGEN:-----------------------------------------
     
     estado=bmp_leer_imagen(datos.imagen1, &imagen1);
@@ -391,5 +394,5 @@ bool filtro_ya_guardado(t_Datos* datos, const char* nombre) //si un filtro ya fu
 
 bool necesita_dos_imagenes (const char* nombre) //Se fija si necesita dos imagenes
 {
-    return (strcmp(nombre, "--concatenar-horizontal") == 0 || strcmp(nombre, "--concatenar-vertical") == 0);
+    return (strcmp(nombre, "--concatenar-horizontal") == 0 || strcmp(nombre, "--concatenar-vertical") == 0 || strcmp(nombre,"--comodin")==0);
 }

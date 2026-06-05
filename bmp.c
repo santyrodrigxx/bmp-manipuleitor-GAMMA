@@ -175,7 +175,6 @@ int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
     FILE *nueva_imagen = fopen(nombreArchivo, "wb");
     if(nueva_imagen == NULL){
         puts("Error al crear el archivo de imagen.");
-        fclose(nueva_imagen);
         return ERROR_ARCHIVO;
     }
 

@@ -17,6 +17,7 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen, bool info, bo
 
     if (arc_imagen == NULL) { //aca no cargue la matriz, por lo tanto no hace falta destruir nada
         puts("Error al abrir archivo imagen.");
+        fclose(arc_imagen);
         return ERROR_ARCHIVO;
     }
 
@@ -73,7 +74,7 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen, bool info, bo
 
     fseek(arc_imagen, imagen->cabecera.archivo.posPixeles, SEEK_SET);
 
-    for(int i = 0; i < alto; i++){ //admito imagenes "bottom-up" (de abajo hacia arriba), caso contrario validado en "bmp_validar_cabecera"
+    for(int i = 0; i < alto; i++){ //admito imagenes "bottom-up" (de abajo hacia arriba)
 
         filaMatriz = alto - 1 - i;
         for(int j = 0; j < ancho; j++){
@@ -89,7 +90,6 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen, bool info, bo
 
 
             if(estadoError != EXITO){
-                bmp_destruir_imagen(imagen);
                 fclose(arc_imagen);
                 return estadoError;
 
@@ -170,11 +170,13 @@ void bmp_imprimir_info(const tImagenBMP *imagen, const char *nombreArchivo, bool
 }
 
 
+
 int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
 {
     FILE *nueva_imagen = fopen(nombreArchivo, "wb");
     if(nueva_imagen == NULL){
         puts("Error al crear el archivo de imagen.");
+        fclose(nueva_imagen);
         return ERROR_ARCHIVO;
     }
 
@@ -251,7 +253,7 @@ int bmp_copiar_imagen(tImagenBMP* destino, const tImagenBMP* origen)
     //copia cabeceras
     destino->cabecera = origen->cabecera;
 
-    //extraigo las dimensiones 
+    //extraigo las dimensiones
     int ancho = origen->cabecera.info.anchoImagen;
     int alto = origen->cabecera.info.altoImagen;
 
@@ -260,7 +262,7 @@ int bmp_copiar_imagen(tImagenBMP* destino, const tImagenBMP* origen)
     int codError = matriz_crear(&destino->pixeles, alto, ancho, sizeof(tPixelBMP));
     if (codError != EXITO)
     {
-        return codError; 
+        return codError;
     }
 
     tPixelBMP pixel_aux;
@@ -272,7 +274,7 @@ int bmp_copiar_imagen(tImagenBMP* destino, const tImagenBMP* origen)
         {
             //saco origen
             matriz_get(&origen->pixeles, i, j, &pixel_aux);
-            
+
             //guardo en dest
             matriz_set(&destino->pixeles, i, j, &pixel_aux);
         }
@@ -280,3 +282,4 @@ int bmp_copiar_imagen(tImagenBMP* destino, const tImagenBMP* origen)
 
     return EXITO;
 }
+

@@ -17,7 +17,6 @@ int bmp_leer_imagen(const char *nombreArchivo, tImagenBMP *imagen, bool info, bo
 
     if (arc_imagen == NULL) { //aca no cargue la matriz, por lo tanto no hace falta destruir nada
         puts("Error al abrir archivo imagen.");
-        fclose(arc_imagen);
         return ERROR_ARCHIVO;
     }
 

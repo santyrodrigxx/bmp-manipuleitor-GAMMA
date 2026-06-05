@@ -740,6 +740,11 @@ int aplicar_recortar(tImagenBMP* imagen, int porcentaje)
         int nuevo_alto = (alto * porcentaje) / 100;
         int nuevo_ancho = (ancho * porcentaje) / 100;
 
+        if(nuevo_alto == 0) 
+        nuevo_alto=1;
+        if(nuevo_ancho ==0)
+        nuevo_ancho=1;
+
         if (nuevo_alto > 0 && nuevo_ancho > 0)
         {
             tda_matriz nueva_matriz;
@@ -795,6 +800,11 @@ int aplicar_achicar(tImagenBMP* imagen, int porcentaje)
 
         int nuevo_alto = (alto * porcentaje) / 100;
         int nuevo_ancho = (ancho * porcentaje) / 100;
+
+        if(nuevo_alto==0)
+        nuevo_alto=1;
+        if(nuevo_ancho==0)
+        nuevo_ancho=1;
 
         if (nuevo_alto > 0 && nuevo_ancho > 0)
         {

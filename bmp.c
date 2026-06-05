@@ -219,6 +219,9 @@ int bmp_escribir_imagen(const char *nombreArchivo, const tImagenBMP *imagen)
 
 }
 
-void bmp_destruir_imagen(tImagenBMP *imagen){
+void bmp_destruir_imagen(tImagenBMP *imagen)
+{
+    if(imagen == NULL)
+        return;
     matriz_destruir(&imagen->pixeles);
 }

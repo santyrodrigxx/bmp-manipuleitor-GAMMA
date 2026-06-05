@@ -3,6 +3,7 @@
 
 int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
 {
+    //BORRO TODOS LOS BMP DESTRUIR, PQ SI TENGO ERROR (INT DE BUCLE_FILTROS), YA HACE ESTE PROCESO
     int i;
     int codError = EXITO;
 
@@ -21,21 +22,14 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
             puts("Aplicando filtro de negativo...");
             codError = aplicar_negativo(imagen1);
             if(codError != EXITO){
-                bmp_destruir_imagen(imagen1);
-                bmp_destruir_imagen(imagen2);
                 puts("Error al aplicar el filtro de negativo.");
                 return codError;
             }
+            modificar_nombre_filtro(nombreFinal, datos, i);
 
-            /*if(!adicionar_nombre_filtro(nombreFinal,
-                            (datos.filtros_pedidos+i)->nombre,
-                            (datos.filtros_pedidos+i)->parametro))
-            {
-                bmp_destruir_imagen(imagen1);
-                bmp_destruir_imagen(imagen2);
-                puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre del filtro.");
-                return ERROR_ARCHIVO;
-            }*/
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
 
         }
 
@@ -45,21 +39,15 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
             puts("Aplicando filtro de escala de grises...");
             codError = aplicar_grises(imagen1);
             if(codError != EXITO){
-                bmp_destruir_imagen(imagen1);
-                bmp_destruir_imagen(imagen2);
                 puts("Error al aplicar el filtro de escala de grises");
                 return codError;
             }
+            modificar_nombre_filtro(nombreFinal, datos, i);
 
-            /*if(!adicionar_nombre_filtro(nombreFinal,
-                            (datos.filtros_pedidos+i)->nombre,
-                            (datos.filtros_pedidos+i)->parametro))
-            {
-                bmp_destruir_imagen(imagen1);
-                bmp_destruir_imagen(imagen2);
-                puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre del filtro.");
-                return ERROR_ARCHIVO;
-            }*/
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+
         }
         //FILTRO: ESPEJAR HORIZONALMENTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--espejar-horizontal")==0)
@@ -67,21 +55,15 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
             puts("Aplicando filtro de espejar horizontal...");
             codError= espejar_horizontal(imagen1);
             if(codError != EXITO){
-                bmp_destruir_imagen(imagen1);
-                bmp_destruir_imagen(imagen2);
                 puts("Error al aplicar el filtro de espejar horizontal.");
                 return codError;
             }
+            modificar_nombre_filtro(nombreFinal, datos, i);
 
-            /*if(!adicionar_nombre_filtro(nombreFinal,
-                            (datos.filtros_pedidos+i)->nombre,
-                            (datos.filtros_pedidos+i)->parametro))
-            {
-                bmp_destruir_imagen(imagen1);
-                bmp_destruir_imagen(imagen2);
-                puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre del filtro.");
-                return ERROR_ARCHIVO;
-            }*/
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+            
         }
         //FILTRO: ESPEJAR VERTICALMENTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--espejar-vertical")==0)
@@ -89,21 +71,15 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
             puts("Aplicando filtro de espejar vertical...");
             codError= espejar_vertical(imagen1);
             if(codError != EXITO){
-                bmp_destruir_imagen(imagen1);
-                bmp_destruir_imagen(imagen2);
                 puts("Error al aplicar el filtro de espejar vertical.");
                 return codError;
             }
+            modificar_nombre_filtro(nombreFinal, datos, i);
 
-            /*if(!adicionar_nombre_filtro(nombreFinal,
-                            (datos.filtros_pedidos+i)->nombre,
-                            (datos.filtros_pedidos+i)->parametro))
-            {
-                bmp_destruir_imagen(imagen1);
-                bmp_destruir_imagen(imagen2);
-                puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre del filtro.");
-                return ERROR_ARCHIVO;
-            }*/
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+            
         }
         //FILTRO: AUMENTAR CONTRASTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--aumentar-contraste")==0)
@@ -111,21 +87,15 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
             puts("Aplicando filtro de aumentar contraste...");
             codError= aumentar_contraste(imagen1,(datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
-                bmp_destruir_imagen(imagen1);
-                bmp_destruir_imagen(imagen2);
                 puts("Error al aplicar el filtro de aumentar contraste.");
                 return codError;
             }
+            modificar_nombre_filtro(nombreFinal, datos, i);
 
-            /*if(!adicionar_nombre_filtro(nombreFinal,
-                            (datos.filtros_pedidos+i)->nombre,
-                            (datos.filtros_pedidos+i)->parametro))
-            {
-                bmp_destruir_imagen(imagen1);
-                bmp_destruir_imagen(imagen2);
-                puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre del filtro.");
-                return ERROR_ARCHIVO;
-            }*/
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+            
         }
         //FILTRO: REDUCIR CONTRASTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--reducir-contraste")==0)
@@ -133,61 +103,176 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
             puts("Aplicando filtro de reducir contraste...");
             codError= reducir_contraste(imagen1,(datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
-                bmp_destruir_imagen(imagen1);
-                bmp_destruir_imagen(imagen2);
                 puts("Error al aplicar el filtro de reducir contraste.");
                 return codError;
             }
+            modificar_nombre_filtro(nombreFinal, datos, i);
 
-            /*if(!adicionar_nombre_filtro(nombreFinal,
-                            (datos.filtros_pedidos+i)->nombre,
-                            (datos.filtros_pedidos+i)->parametro))
-{
-                bmp_destruir_imagen(imagen1);
-                bmp_destruir_imagen(imagen2);
-                puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre del filtro.");
-                return ERROR_ARCHIVO;
-            }*/
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+
         }
+        //FILTRO: TONALIDAD AZUL ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--tonalidad-azul")==0)
         {
-            //aplicar_filtro7(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            puts("Aplicando filtro de tonalidad azul...");
+            codError = aplicar_tonalidad_azul(imagen1, (datos.filtros_pedidos+i)->parametro);
+            if(codError != EXITO){
+                puts("Error al aplicar el filtro de tonalidad azul.");
+                return codError;
+            }
+
+            modificar_nombre_filtro(nombreFinal, datos, i);
+
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+            
+
         }
+        //FILTRO: TONALIDAD VERDE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--tonalidad-verde")==0)
         {
-            //aplicar_filtro8(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            puts("Aplicando filtro de tonalidad verde...");
+            codError = aplicar_tonalidad_verde(imagen1, (datos.filtros_pedidos+i)->parametro);
+            if(codError != EXITO){
+                puts("Error al aplicar el filtro de tonalidad verde.");
+                return codError;
+            }
+
+            modificar_nombre_filtro(nombreFinal, datos, i);
+
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+            
         }
+        //FILTRO: TONALIDAD ROJA ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--tonalidad-roja")==0)
         {
-            //aplicar_filtro9(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            puts("Aplicando filtro de tonalidad roja...");
+            codError = aplicar_tonalidad_roja(imagen1, (datos.filtros_pedidos+i)->parametro);
+            if(codError != EXITO){
+                puts("Error al aplicar el filtro de tonalidad roja.");
+                return codError;
+            }
+
+            modificar_nombre_filtro(nombreFinal, datos, i);
+
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+
         }
+        //FILTRO: RECORTAR ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--recortar")==0)
         {
-            //aplicar_filtro10(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            puts("Aplicando filtro de recortar...");
+            codError = aplicar_recortar(imagen1, (datos.filtros_pedidos+i)->parametro);
+            if(codError != EXITO){
+                puts("Error al aplicar el filtro de recortar.");
+                return codError;
+            }
+
+            modificar_nombre_filtro(nombreFinal, datos, i);
+
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+
         }
+        //FILTRO: ACHICAR ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--achicar")==0)
         {
-            //aplicar_filtro11(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            puts("Aplicando filtro de achicar...");
+            codError = aplicar_achicar(imagen1, (datos.filtros_pedidos+i)->parametro);
+            if(codError != EXITO){
+                puts("Error al aplicar el filtro de achicar.");
+                return codError;
+            }
+
+            modificar_nombre_filtro(nombreFinal, datos, i);
+
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+            
         }
+        //FILTRO: ROTAR DERECHA ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--rotar-derecha")==0)//ANTO
         {
-            //aplicar_filtro12(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            puts("Aplicando filtro de rotar derecha...");
+            codError = rotar_derecha(imagen1);
+            if(codError != EXITO){
+                puts("Error al aplicar el filtro de rotar derecha.");
+                return codError;
+            }
+            modificar_nombre_filtro(nombreFinal, datos, i);
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+            
         }
-        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--rotar-izquierda")==0)//ANTO
+        //FILTRO: ROTAR IZQUIERDA ----------------------------------------------------------
+        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--rotar-izquierda")==0)
         {
-            //aplicar_filtro13(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            puts("Aplicando filtro de rotar izquierda...");
+            codError = rotar_izquierda(imagen1);
+            if(codError != EXITO){
+                puts("Error al aplicar el filtro de rotar izquierda.");
+                return codError;
+            }
+            modificar_nombre_filtro(nombreFinal, datos, i);
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+            
         }
-        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--concatenar-horizontal")==0)//ANTO
+        //FILTRO: CONCATENAR HORIZONTAL ----------------------------------------------------------
+        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--concatenar-horizontal")==0)
         {
-            //aplicar_filtro14(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            puts("Aplicando filtro de concatenar horizontal...");
+            codError = concatenar_horizontal(imagen1, imagen2);
+            if(codError != EXITO){
+                puts("Error al aplicar el filtro de concatenar horizontal.");
+                return codError;
+            }
+            modificar_nombre_filtro(nombreFinal, datos, i);
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+            
         }
-        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--concatenar-vertical")==0)//ANTO
+        //FILTRO: CONCATENAR VERTICAL ----------------------------------------------------------
+        else if(strcmp((datos.filtros_pedidos+i)->nombre,"--concatenar-vertical")==0)
         {
-            //aplicar_filtro15(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            puts("Aplicando filtro de concatenar vertical...");
+            codError = concatenar_vertical(imagen1, imagen2);
+            if(codError != EXITO){
+                puts("Error al aplicar el filtro de concatenar vertical.");
+                return codError;
+            }
+            modificar_nombre_filtro(nombreFinal, datos, i);
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+            
         }
+        //FILTRO: COMODIN ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--comodin")==0)
         {
-            //aplicar_filtro16(imagen1, imagen2, (datos.filtros_pedidos+i)->parametro);
+            puts("Aplicando filtro comodin...");
+            //APLICAR FUNCION COMODIN...
+            if(codError != EXITO){
+                puts("Error al aplicar el filtro comodin.");
+                return codError;
+            }
+            modificar_nombre_filtro(nombreFinal, datos, i);
+            codError = bmp_escribir_imagen(nombreFinal, imagen1);
+            if(codError != EXITO)
+                return codError;
+            
         }
         else
         {
@@ -195,57 +280,31 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         }
     }
 
-    if(!modificar_nombre_filtro(nombreFinal, datos))
-    {
-        bmp_destruir_imagen(imagen1);
-        bmp_destruir_imagen(imagen2);
-        puts("Error al generar el nombre del archivo final. Sin espacio suficiente para agregar el nombre de los filtros.");
-        return codError;
-    }
 
     codError = bmp_escribir_imagen(nombreFinal, imagen1);
     if(codError != EXITO)
-    {
-        bmp_destruir_imagen(imagen1);
-        bmp_destruir_imagen(imagen2);
         return codError;
-    }
-
-    bmp_destruir_imagen(imagen1); //destruyo la imagen procesada porque ya se guardo el resultado en un nuevo archivo, por lo que ya no se necesita
-    bmp_destruir_imagen(imagen2); //destruyo la segunda imagen porque ya no se va a usar
 
     return EXITO;
 }
 
-bool modificar_nombre_filtro(char *nombreArchivo, t_Datos info)
+void modificar_nombre_filtro(char *nombreArchivo, t_Datos info, int cont)
 {
-    int ce = info.cant_filtros;
-    int i  = 0;
+    puts("Generando nombre del archivo ...");
+    strcpy(nombreArchivo, "GAMMA");
 
-    //valido todos los nombres antes de modificar nada
-    for(int k = 0; k < ce; k++)
+    strcat(nombreArchivo, "_");
+    strcat(nombreArchivo, info.filtros_pedidos[cont].nombre + 2);
+
+    if(info.filtros_pedidos[cont].parametro != 0)
     {
-        if((info.filtros_pedidos+k)->nombre == NULL)
-            return false;
+        char parametroAux[20];
+        sprintf(parametroAux, "[%d]", info.filtros_pedidos[cont].parametro);
+        strcat(nombreArchivo, parametroAux);
     }
 
-    while(i < ce && (strlen(nombreArchivo) + strlen((info.filtros_pedidos+i)->nombre) + 30) < 255)
-    {
-        strcat(nombreArchivo, "_");
-        strcat(nombreArchivo, (info.filtros_pedidos+i)->nombre + 2); //saco el --
-
-        if((info.filtros_pedidos+i)->parametro != 0)
-        {
-            char parametroAux[20];
-            sprintf(parametroAux, "[%d]", (info.filtros_pedidos+i)->parametro);
-            strcat(nombreArchivo, parametroAux);
-        }
-
-        i++;
-    }
-
-    strcat(nombreArchivo, "_imagen.bmp");
-    return true;
+    strcat(nombreArchivo, "_unlam.bmp");
+    printf("Archivo %s generado correctamente.\n", nombreArchivo);
 }
 
 //FILTROS
@@ -506,18 +565,21 @@ int reducir_contraste (tImagenBMP* imagen, const int parametro)
     return EXITO;
 }
 
-void aplicar_tonalidad_azul(tImagenBMP* imagen, int porcentaje)
+int aplicar_tonalidad_azul(tImagenBMP* imagen, int porcentaje)
 {
     int alto = imagen->cabecera.info.altoImagen;
     int ancho = imagen->cabecera.info.anchoImagen;
     tPixelBMP pixel;
     int i, j, nuevo_valor;
+    int codigo = EXITO;
 
     for(i = 0; i < alto; i++) // i=filas
     {
         for(j = 0; j < ancho; j++) // j=columnas
         {
             matriz_get(&imagen->pixeles, i, j, &pixel);
+            if(codigo != EXITO)
+                return codigo;
 
             nuevo_valor = pixel.azul + (pixel.azul * porcentaje / 100);
             if(nuevo_valor > 255)
@@ -527,22 +589,28 @@ void aplicar_tonalidad_azul(tImagenBMP* imagen, int porcentaje)
             pixel.azul = (unsigned char)nuevo_valor;
 
             matriz_set(&imagen->pixeles, i, j, &pixel);
+            if (codigo != EXITO)
+                return codigo;
         }
     }
+    return EXITO;
 }
 
-void aplicar_tonalidad_verde(tImagenBMP* imagen, int porcentaje)
+int aplicar_tonalidad_verde(tImagenBMP* imagen, int porcentaje)
 {
     int alto = imagen->cabecera.info.altoImagen;
     int ancho = imagen->cabecera.info.anchoImagen;
     tPixelBMP pixel;
     int i, j, nuevo_valor;
+    int codigo = EXITO;
 
     for(i = 0; i < alto; i++)
     {
         for(j = 0; j < ancho; j++)
         {
             matriz_get(&imagen->pixeles, i, j, &pixel);
+            if (codigo != EXITO)
+                return codigo;
 
             nuevo_valor = pixel.verde + (pixel.verde * porcentaje / 100);
             if(nuevo_valor > 255)
@@ -552,22 +620,28 @@ void aplicar_tonalidad_verde(tImagenBMP* imagen, int porcentaje)
             pixel.verde = (unsigned char)nuevo_valor;
 
             matriz_set(&imagen->pixeles, i, j, &pixel);
+            if(codigo != EXITO)
+                return codigo;
         }
     }
+    return EXITO;
 }
 
-void aplicar_tonalidad_roja(tImagenBMP* imagen, int porcentaje)
+int aplicar_tonalidad_roja(tImagenBMP* imagen, int porcentaje)
 {
     int alto = imagen->cabecera.info.altoImagen;
     int ancho = imagen->cabecera.info.anchoImagen;
     tPixelBMP pixel;
     int i, j, nuevo_valor;
+    int codigo = EXITO;
 
     for(i = 0; i < alto; i++)
     {
         for(j = 0; j < ancho; j++)
         {
             matriz_get(&imagen->pixeles, i, j, &pixel);
+            if(codigo != EXITO)
+                return codigo;
 
             nuevo_valor = pixel.rojo + (pixel.rojo * porcentaje / 100);
             if(nuevo_valor > 255)
@@ -577,8 +651,11 @@ void aplicar_tonalidad_roja(tImagenBMP* imagen, int porcentaje)
             pixel.rojo = (unsigned char)nuevo_valor;
 
             matriz_set(&imagen->pixeles, i, j, &pixel);
+            if(codigo != EXITO)
+                return codigo;
         }
     }
+    return EXITO;
 }
 
 int aplicar_recortar(tImagenBMP* imagen, int porcentaje)
@@ -637,7 +714,6 @@ int aplicar_recortar(tImagenBMP* imagen, int porcentaje)
 
     return estado;
 }
-
 int aplicar_achicar(tImagenBMP* imagen, int porcentaje)
 {
     int estado = EXITO;
@@ -715,7 +791,7 @@ int rotar_derecha(tImagenBMP *imagen)
     codigo = matriz_crear(&nueva_matriz, ancho, alto, sizeof(tPixelBMP));
     if(codigo != EXITO) return codigo;
 
-    
+
     for(i = 0; i < alto; i++)//la fila i de la imagen original se convierte en la columna i de la nueva matriz, pero invertida
     {
         for(j = 0; j < ancho; j++)
@@ -770,7 +846,7 @@ int rotar_izquierda(tImagenBMP *imagen)
     codigo = matriz_crear(&nueva_matriz, ancho, alto, sizeof(tPixelBMP));
     if(codigo != EXITO) return codigo;
 
-    
+
     for(i = 0; i < alto; i++)//hago lo mismo, pero la fila i de la imagen original se convierte en la columna i de la nueva matriz, sin invertir
     {
         for(j = 0; j < ancho; j++)
@@ -810,185 +886,241 @@ int rotar_izquierda(tImagenBMP *imagen)
 
 int concatenar_horizontal(tImagenBMP *imagen1, tImagenBMP *imagen2)
 {
-    if(imagen1 == NULL || imagen2 == NULL){
+    if(imagen1 == NULL || imagen2 == NULL)
+    {
         puts("Error: no existe una de las imágenes.");
         return ERROR_ARGUMENTOS;
     }
 
-    int i, j, codigo = EXITO;
+    int codigo = EXITO;
+
     int alto1  = imagen1->cabecera.info.altoImagen;
     int ancho1 = imagen1->cabecera.info.anchoImagen;
     int alto2  = imagen2->cabecera.info.altoImagen;
     int ancho2 = imagen2->cabecera.info.anchoImagen;
 
-    if(alto1 != alto2){
-        puts("Error: las imágenes deben tener la misma altura para concatenar horizontalmente.");
-        return ERROR_ARGUMENTOS;
-    }
+    int nuevo_alto  = alto1 > alto2 ? alto1 : alto2;
+    int nuevo_ancho = ancho1 + ancho2;
 
     tda_matriz nueva_matriz;
-    codigo = matriz_crear(&nueva_matriz, alto1, ancho1 + ancho2, sizeof(tPixelBMP));
-    if(codigo != EXITO) return codigo;
 
-    for(i = 0; i < alto1; i++)
+    codigo = matriz_crear(&nueva_matriz, nuevo_alto, nuevo_ancho, sizeof(tPixelBMP));
+    if(codigo != EXITO)
+        return codigo;
+
+    tPixelBMP pixel;
+    tPixelBMP negro = {0, 0, 0};
+
+    for(int i = 0; i < nuevo_alto; i++)
     {
-        for(j = 0; j < ancho1; j++)
+        for(int j = 0; j < nuevo_ancho; j++)
         {
-            tPixelBMP pixel;
-            codigo = matriz_get(&imagen1->pixeles, i, j, &pixel);
-            if(codigo != EXITO){ 
-                matriz_destruir(&nueva_matriz); 
-                return codigo; 
+            if(j < ancho1)
+            {/*Zona de imagen1
+                Si la fila existe en imagen1 copio el pixel.
+                Si no existe completo con negro.*/
+                if(i < alto1)
+                {
+                    codigo = matriz_get(&imagen1->pixeles, i, j, &pixel);
+                    if(codigo != EXITO)
+                    {
+                        matriz_destruir(&nueva_matriz);
+                        return codigo;
+                    }
+                }
+                else
+                {
+                    pixel = negro;
+                }
+            }
+            else
+            {
+                //Zona de imagen2
+                //La columna real dentro de imagen2 es j - ancho1
+                int columna_img2 = j - ancho1;
+
+                if(i < alto2)
+                {
+                    codigo = matriz_get(&imagen2->pixeles, i, columna_img2, &pixel);
+                    if(codigo != EXITO)
+                    {
+                        matriz_destruir(&nueva_matriz);
+                        return codigo;
+                    }
+                }
+                else
+                {
+                    pixel = negro;
+                }
             }
 
             codigo = matriz_set(&nueva_matriz, i, j, &pixel);
-            if(codigo != EXITO){ 
-                matriz_destruir(&nueva_matriz); 
-                return codigo; 
-            }
-        }
-        for(j = 0; j < ancho2; j++)
-        {
-            tPixelBMP pixel;
-            codigo = matriz_get(&imagen2->pixeles, i, j, &pixel);
-            if(codigo != EXITO){ 
-                matriz_destruir(&nueva_matriz); 
-                return codigo; 
-            }
-
-            codigo = matriz_set(&nueva_matriz, i, j + ancho1, &pixel);
-            if(codigo != EXITO){ 
-                matriz_destruir(&nueva_matriz); 
-                return codigo; 
+            if(codigo != EXITO)
+            {
+                matriz_destruir(&nueva_matriz);
+                return codigo;
             }
         }
     }
 
-    //reemplazo la matriz original
     matriz_destruir(&imagen1->pixeles);
-    codigo = matriz_crear(&imagen1->pixeles, alto1, ancho1 + ancho2, sizeof(tPixelBMP));
-    if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
 
-    for(i = 0; i < alto1; i++)
+    codigo = matriz_crear(&imagen1->pixeles, nuevo_alto, nuevo_ancho, sizeof(tPixelBMP));
+    if(codigo != EXITO)
     {
-        for(j = 0; j < ancho1 + ancho2; j++)
+        matriz_destruir(&nueva_matriz);
+        return codigo;
+    }
+
+    for(int i = 0; i < nuevo_alto; i++)
+    {
+        for(int j = 0; j < nuevo_ancho; j++)
         {
-            tPixelBMP pixel;
             codigo = matriz_get(&nueva_matriz, i, j, &pixel);
-            if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+            if(codigo != EXITO)
+            {
+                matriz_destruir(&nueva_matriz);
+                return codigo;
+            }
 
             codigo = matriz_set(&imagen1->pixeles, i, j, &pixel);
-            if(codigo != EXITO){ matriz_destruir(&nueva_matriz); return codigo; }
+            if(codigo != EXITO)
+            {
+                matriz_destruir(&nueva_matriz);
+                return codigo;
+            }
         }
     }
 
-    //actualizo dimensiones en la cabecera
-    int nuevo_ancho = ancho1 + ancho2;
-    int padding     = (4 - ((nuevo_ancho * sizeof(tPixelBMP)) % 4)) % 4;
+    int padding = (4 - ((nuevo_ancho * sizeof(tPixelBMP)) % 4)) % 4;
 
     imagen1->cabecera.info.anchoImagen   = nuevo_ancho;
-    imagen1->cabecera.info.altoImagen    = alto1;
-    imagen1->cabecera.info.tamImagen     = (nuevo_ancho * sizeof(tPixelBMP) + padding) * alto1;
+    imagen1->cabecera.info.altoImagen    = nuevo_alto;
+    imagen1->cabecera.info.tamImagen     = (nuevo_ancho * sizeof(tPixelBMP) + padding) * nuevo_alto;
     imagen1->cabecera.archivo.tamArchivo = sizeof(BMPCabecera) + imagen1->cabecera.info.tamImagen;
 
     matriz_destruir(&nueva_matriz);
+
     return EXITO;
 }
 
 int concatenar_vertical(tImagenBMP *imagen1, tImagenBMP *imagen2)
 {
-    if(imagen1 == NULL || imagen2 == NULL){
+    if(imagen1 == NULL || imagen2 == NULL)
+    {
         puts("Error: no existe una de las imágenes.");
         return ERROR_ARGUMENTOS;
     }
 
-    int i, j, codigo = EXITO;
+    int codigo = EXITO;
+
     int alto1  = imagen1->cabecera.info.altoImagen;
     int ancho1 = imagen1->cabecera.info.anchoImagen;
     int alto2  = imagen2->cabecera.info.altoImagen;
     int ancho2 = imagen2->cabecera.info.anchoImagen;
 
-    if(ancho1 != ancho2){
-        puts("Error: las imágenes deben tener la misma anchura para concatenar verticalmente.");
-        return ERROR_ARGUMENTOS;
-    }
+    int nuevo_alto  = alto1 + alto2;
+    int nuevo_ancho = ancho1 > ancho2 ? ancho1 : ancho2;
 
     tda_matriz nueva_matriz;
-    codigo = matriz_crear(&nueva_matriz, alto1 + alto2, ancho1, sizeof(tPixelBMP));
-    if(codigo != EXITO) return codigo;
 
-    for(i = 0; i < alto1; i++)
+    codigo = matriz_crear(&nueva_matriz, nuevo_alto, nuevo_ancho, sizeof(tPixelBMP));
+    if(codigo != EXITO)
+        return codigo;
+
+    tPixelBMP pixel;
+    tPixelBMP negro = {0, 0, 0};
+
+    for(int i = 0; i < nuevo_alto; i++)
     {
-        for(j = 0; j < ancho1; j++)
+        for(int j = 0; j < nuevo_ancho; j++)
         {
-            tPixelBMP pixel;
-            codigo = matriz_get(&imagen1->pixeles, i, j, &pixel);
-            if(codigo != EXITO){ 
-                matriz_destruir(&nueva_matriz); 
-                return codigo; 
+            if(i < alto1)
+            {/* Zona de imagen1
+                Si la columna existe copio
+                Si no existe completo con negro*/
+                if(j < ancho1)
+                {
+                    codigo = matriz_get(&imagen1->pixeles, i, j, &pixel);
+                    if(codigo != EXITO)
+                    {
+                        matriz_destruir(&nueva_matriz);
+                        return codigo;
+                    }
+                }
+                else
+                {
+                    pixel = negro;
+                }
+            }
+            else
+            {
+                //Zona de imagen2
+                //La fila real dentro de imagen2 es i - alto1
+                int fila_img2 = i - alto1;
+
+                if(j < ancho2)
+                {
+                    codigo = matriz_get(&imagen2->pixeles, fila_img2, j, &pixel);
+                    if(codigo != EXITO)
+                    {
+                        matriz_destruir(&nueva_matriz);
+                        return codigo;
+                    }
+                }
+                else
+                {
+                    pixel = negro;
+                }
             }
 
             codigo = matriz_set(&nueva_matriz, i, j, &pixel);
-            if(codigo != EXITO){ 
-                matriz_destruir(&nueva_matriz); 
-                return codigo; 
-            }
-        }
-    }
-    for(i = 0; i < alto2; i++)
-    {
-        for(j = 0; j < ancho2; j++)
-        {
-            tPixelBMP pixel;
-            codigo = matriz_get(&imagen2->pixeles, i, j, &pixel);
-            if(codigo != EXITO){ 
-                matriz_destruir(&nueva_matriz); 
-                return codigo; 
-            }
-
-            codigo = matriz_set(&nueva_matriz, i + alto1, j, &pixel);
-            if(codigo != EXITO){ 
-                matriz_destruir(&nueva_matriz); 
-                return codigo; 
+            if(codigo != EXITO)
+            {
+                matriz_destruir(&nueva_matriz);
+                return codigo;
             }
         }
     }
 
-    //reemplazo la matriz original
     matriz_destruir(&imagen1->pixeles);
-    codigo = matriz_crear(&imagen1->pixeles, alto1 + alto2, ancho1, sizeof(tPixelBMP));
-    if(codigo != EXITO){
+
+    codigo = matriz_crear(&imagen1->pixeles, nuevo_alto, nuevo_ancho, sizeof(tPixelBMP));
+    if(codigo != EXITO)
+    {
         matriz_destruir(&nueva_matriz);
-        return codigo; 
+        return codigo;
     }
 
-    for(i = 0; i < alto1 + alto2; i++)
+    for(int i = 0; i < nuevo_alto; i++)
     {
-        for(j = 0; j < ancho1; j++)
+        for(int j = 0; j < nuevo_ancho; j++)
         {
-            tPixelBMP pixel;
             codigo = matriz_get(&nueva_matriz, i, j, &pixel);
-            if(codigo != EXITO){ 
-                matriz_destruir(&nueva_matriz); 
-                return codigo; 
+            if(codigo != EXITO)
+            {
+                matriz_destruir(&nueva_matriz);
+                return codigo;
             }
 
             codigo = matriz_set(&imagen1->pixeles, i, j, &pixel);
-            if(codigo != EXITO){ 
-                matriz_destruir(&nueva_matriz); 
-                return codigo; 
+            if(codigo != EXITO)
+            {
+                matriz_destruir(&nueva_matriz);
+                return codigo;
             }
         }
     }
 
-    //actualizo dimensiones en la cabecera
-    int nuevo_alto = alto1 + alto2;
-    int padding   = (4 - ((ancho1 * sizeof(tPixelBMP)) % 4)) % 4;
-    imagen1->cabecera.info.altoImagen = nuevo_alto;
-    imagen1->cabecera.info.tamImagen = (ancho1 * sizeof(tPixelBMP) + padding) * nuevo_alto;
+    int padding = (4 - ((nuevo_ancho * sizeof(tPixelBMP)) % 4)) % 4;
+
+    imagen1->cabecera.info.anchoImagen   = nuevo_ancho;
+    imagen1->cabecera.info.altoImagen    = nuevo_alto;
+    imagen1->cabecera.info.tamImagen     = (nuevo_ancho * sizeof(tPixelBMP) + padding) * nuevo_alto;
     imagen1->cabecera.archivo.tamArchivo = sizeof(BMPCabecera) + imagen1->cabecera.info.tamImagen;
 
     matriz_destruir(&nueva_matriz);
+
     return EXITO;
 }
 

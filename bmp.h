@@ -105,7 +105,7 @@ void bmp_destruir_imagen(tImagenBMP *imagen);
 void bmp_imprimir_info(const tImagenBMP *imagen, const char *nombreArchivo, bool info);
 //podemos llamarla en cualquier momento del programa
 
-/*int bmp_copiar_imagen(tImagenBMP* destino, const tImagenBMP* origen);*/
+int bmp_copiar_imagen(tImagenBMP* destino, const tImagenBMP* origen);
 
 
 #endif // BMP_H_INCLUDED

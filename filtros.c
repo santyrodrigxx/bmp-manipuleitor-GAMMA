@@ -16,20 +16,33 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
             printf("[INFO] Aplicando filtro: %s\n", (datos.filtros_pedidos+i)->nombre);
         }
 
+        tImagenBMP imagen_copia;
+        memset(&imagen_copia, 0, sizeof(tImagenBMP));
+        /* Crear una copia de imagen1 para aplicar los filtros sin modificar el original */
+        
+        codError = bmp_copiar_imagen(&imagen_copia, imagen1);
+        if(codError != EXITO) {
+        puts("Error al crear una copia de la imagen.");
+        return codError;
+        }
+
         //FILTRO: NEGATIVO----------------------------------------------------------------------
         if(strcmp((datos.filtros_pedidos+i)->nombre,"--negativo")==0)
         {
             //puts("Aplicando filtro de negativo...");
-            codError = aplicar_negativo(imagen1);
+            codError = aplicar_negativo(&imagen_copia);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de negativo.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
             modificar_nombre_filtro(nombreFinal, datos, i);
 
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
 
         }
 
@@ -37,97 +50,115 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--escala-de-grises")==0)
         {
             //puts("Aplicando filtro de escala de grises...");
-            codError = aplicar_grises(imagen1);
+            codError = aplicar_grises(&imagen_copia);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de escala de grises");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
             modificar_nombre_filtro(nombreFinal, datos, i);
 
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
 
         }
         //FILTRO: ESPEJAR HORIZONALMENTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--espejar-horizontal")==0)
         {
             //puts("Aplicando filtro de espejar horizontal...");
-            codError= espejar_horizontal(imagen1);
+            codError= espejar_horizontal(&imagen_copia);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de espejar horizontal.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
             modificar_nombre_filtro(nombreFinal, datos, i);
 
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
             
         }
         //FILTRO: ESPEJAR VERTICALMENTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--espejar-vertical")==0)
         {
             //puts("Aplicando filtro de espejar vertical...");
-            codError= espejar_vertical(imagen1);
+            codError= espejar_vertical(&imagen_copia);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de espejar vertical.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
             modificar_nombre_filtro(nombreFinal, datos, i);
 
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
             
         }
         //FILTRO: AUMENTAR CONTRASTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--aumentar-contraste")==0)
         {
             //puts("Aplicando filtro de aumentar contraste...");
-            codError= aumentar_contraste(imagen1,(datos.filtros_pedidos+i)->parametro);
+            codError= aumentar_contraste(&imagen_copia,(datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de aumentar contraste.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
             modificar_nombre_filtro(nombreFinal, datos, i);
 
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
             
         }
         //FILTRO: REDUCIR CONTRASTE ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--reducir-contraste")==0)
         {
             //puts("Aplicando filtro de reducir contraste...");
-            codError= reducir_contraste(imagen1,(datos.filtros_pedidos+i)->parametro);
+            codError= reducir_contraste(&imagen_copia,(datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de reducir contraste.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
             modificar_nombre_filtro(nombreFinal, datos, i);
 
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
 
         }
         //FILTRO: TONALIDAD AZUL ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--tonalidad-azul")==0)
         {
             //puts("Aplicando filtro de tonalidad azul...");
-            codError = aplicar_tonalidad_azul(imagen1, (datos.filtros_pedidos+i)->parametro);
+            codError = aplicar_tonalidad_azul(&imagen_copia, (datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de tonalidad azul.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
 
             modificar_nombre_filtro(nombreFinal, datos, i);
 
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
             
 
         }
@@ -135,143 +166,170 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--tonalidad-verde")==0)
         {
             //puts("Aplicando filtro de tonalidad verde...");
-            codError = aplicar_tonalidad_verde(imagen1, (datos.filtros_pedidos+i)->parametro);
+            codError = aplicar_tonalidad_verde(&imagen_copia, (datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de tonalidad verde.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
 
             modificar_nombre_filtro(nombreFinal, datos, i);
 
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
             
         }
         //FILTRO: TONALIDAD ROJA ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--tonalidad-roja")==0)
         {
             //puts("Aplicando filtro de tonalidad roja...");
-            codError = aplicar_tonalidad_roja(imagen1, (datos.filtros_pedidos+i)->parametro);
+            codError = aplicar_tonalidad_roja(&imagen_copia, (datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de tonalidad roja.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
 
             modificar_nombre_filtro(nombreFinal, datos, i);
 
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
 
         }
         //FILTRO: RECORTAR ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--recortar")==0)
         {
             //puts("Aplicando filtro de recortar...");
-            codError = aplicar_recortar(imagen1, (datos.filtros_pedidos+i)->parametro);
+            codError = aplicar_recortar(&imagen_copia, (datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de recortar.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
 
             modificar_nombre_filtro(nombreFinal, datos, i);
 
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
 
         }
         //FILTRO: ACHICAR ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--achicar")==0)
         {
             //puts("Aplicando filtro de achicar...");
-            codError = aplicar_achicar(imagen1, (datos.filtros_pedidos+i)->parametro);
+            codError = aplicar_achicar(&imagen_copia, (datos.filtros_pedidos+i)->parametro);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de achicar.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
 
             modificar_nombre_filtro(nombreFinal, datos, i);
 
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
             
         }
         //FILTRO: ROTAR DERECHA ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--rotar-derecha")==0)//ANTO
         {
             //puts("Aplicando filtro de rotar derecha...");
-            codError = rotar_derecha(imagen1);
+            codError = rotar_derecha(&imagen_copia);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de rotar derecha.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
             modificar_nombre_filtro(nombreFinal, datos, i);
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
             
         }
         //FILTRO: ROTAR IZQUIERDA ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--rotar-izquierda")==0)
         {
             //puts("Aplicando filtro de rotar izquierda...");
-            codError = rotar_izquierda(imagen1);
+            codError = rotar_izquierda(&imagen_copia);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de rotar izquierda.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
             modificar_nombre_filtro(nombreFinal, datos, i);
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
             
         }
         //FILTRO: CONCATENAR HORIZONTAL ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--concatenar-horizontal")==0)
         {
             //puts("Aplicando filtro de concatenar horizontal...");
-            codError = concatenar_horizontal(imagen1, imagen2);
+            codError = concatenar_horizontal(&imagen_copia, imagen2);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de concatenar horizontal.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
             modificar_nombre_filtro(nombreFinal, datos, i);
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
             
         }
         //FILTRO: CONCATENAR VERTICAL ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--concatenar-vertical")==0)
         {
             //puts("Aplicando filtro de concatenar vertical...");
-            codError = concatenar_vertical(imagen1, imagen2);
+            codError = concatenar_vertical(&imagen_copia, imagen2);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro de concatenar vertical.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
             modificar_nombre_filtro(nombreFinal, datos, i);
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
             
         }
         //FILTRO: COMODIN ----------------------------------------------------------
         else if(strcmp((datos.filtros_pedidos+i)->nombre,"--comodin")==0)
         {
             //puts("Aplicando filtro comodin...");
-            codError = aplicar_chroma(imagen1,imagen2);
+            codError = aplicar_chroma(&imagen_copia,imagen2);
             if(codError != EXITO){
                 puts("Error al aplicar el filtro comodin.");
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
             }
             modificar_nombre_filtro(nombreFinal, datos, i);
-            codError = bmp_escribir_imagen(nombreFinal, imagen1);
-            if(codError != EXITO)
+            codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+            if(codError != EXITO) {
+                bmp_destruir_imagen(&imagen_copia);
                 return codError;
+            }
             
         }
         else
@@ -284,13 +342,18 @@ int bucle_filtros(t_Datos datos, tImagenBMP* imagen1, tImagenBMP* imagen2)
             printf("[INFO] Guardando resultado: GAMMA_%s_%s\n", (datos.filtros_pedidos+i)->nombre,datos.imagen1);
             printf("[INFO] Filtro %s aplicado exitosamente\n", (datos.filtros_pedidos+i)->nombre);
         }
+
+        bmp_destruir_imagen(&imagen_copia);
     }
 
 
-    codError = bmp_escribir_imagen(nombreFinal, imagen1);
-    if(codError != EXITO)
+    /*codError = bmp_escribir_imagen(nombreFinal, &imagen_copia);
+    if(codError != EXITO) {
+        bmp_destruir_imagen(&imagen_copia);
         return codError;
+    }*/
 
+    
     return EXITO;
 }
 

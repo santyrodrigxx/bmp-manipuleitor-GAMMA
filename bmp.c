@@ -241,7 +241,7 @@ void bmp_destruir_imagen(tImagenBMP *imagen)
     matriz_destruir(&imagen->pixeles);
 }
 
-/*int bmp_copiar_imagen(tImagenBMP* destino, const tImagenBMP* origen)
+int bmp_copiar_imagen(tImagenBMP* destino, const tImagenBMP* origen)
 {
     // 1. Escudo de seguridad
     if (destino == NULL || origen == NULL)
@@ -280,4 +280,4 @@ void bmp_destruir_imagen(tImagenBMP *imagen)
     }
 
     return EXITO;
-}*/
+}

@@ -68,7 +68,7 @@ int procesar_imagen(int argc, char *argv[])
         printf("   bmpmanipuleitor.exe --info imagen.bmp --validar\n");
         printf("   bmpmanipuleitor.exe foto.bmp --verbose --escala-de-grises\n\n");
         printf("FILTROS:");
-        printf("   --comodin: \n");
+        printf("   --comodin: si la imagen1 tiene un fondo verde, se cambia por los pixeles de la imagen2. NECESARIO INGRESAR DOS IMAGENES\n");
         printf("========================================================\n\n");
     }
 
